@@ -23,7 +23,8 @@ def list_files(directory: str) -> list:
 
 
 
-def delete_file(file_path: str) -> str:    if not is_within_sandbox(file_path): return f"Error: Security Violation."
+def delete_file(file_path: str) -> str:
+    if not is_within_sandbox(file_path): return f"Error: Security Violation."
     if not os.path.exists(file_path): return f"Error: File {file_path} not found."
     os.remove(file_path)
     return f"Success: File {file_path} deleted."
