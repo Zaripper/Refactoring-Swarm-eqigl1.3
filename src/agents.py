@@ -2,8 +2,7 @@ import os
 from typing import TypedDict, List, Optional
 from dotenv import load_dotenv, find_dotenv
 
-# --- 1. USE THE PATCH ---
-from src.gemini_fix import FixedGeminiChat
+
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from src.tools.analysis_tools import run_pylint
@@ -66,7 +65,7 @@ def auditor_agent(state: AgentState):
         "output_response": response.content
     }
     
-    log_experiment("Auditor", "gemini-2.5-flash", ActionType.ANALYSIS, details, "SUCCESS")
+    log_experiment("Auditor", "gemini-2.5-flash", file_path, ActionType.ANALYSIS, details, "SUCCESS")
     
     return {"refactoring_plan": plan, "iteration": state["iteration"] + 1, "current_file": file_path, "status": "SUCCESS"}
 
@@ -101,7 +100,7 @@ def fixer_agent(state: AgentState):
         "output_response": clean_code
     }
     
-    log_experiment("Fixer", "gemini-2.5-flash", ActionType.FIX, details, "SUCCESS")
+    log_experiment("Fixer", "gemini-2.5-flash", file_path, ActionType.FIX, details, "SUCCESS")
     
     return {"failure_report": None, "status": "SUCCESS"}
 
@@ -119,7 +118,7 @@ def judge_tool_runner(state: AgentState):
         is_success = True
         status_str = "SUCCESS"
 
-    log_experiment("Judge", "Tool", ActionType.DEBUG, {"report": report, "input_prompt": "Running tests", "output_response": str(report)}, status_str)
+    log_experiment("Judge", "Tool", state["file_path"], ActionType.DEBUG, {"report": report, "input_prompt": "Running tests", "output_response": str(report)}, status_str)
     
     return {
         "test_results": {"is_valid": is_success, "output": report},

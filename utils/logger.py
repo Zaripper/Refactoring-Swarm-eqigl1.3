@@ -16,13 +16,14 @@ class ActionType(str, Enum):
     DEBUG = "DEBUG"             # Analyse d'erreurs d'exécution
     FIX = "FIX"                 # Application de correctifs
 
-def log_experiment(agent_name: str, model_used: str, action: ActionType, details: dict, status: str):
+def log_experiment(agent_name: str, model_used: str, file_analysed: str, action: ActionType, details: dict, status: str):
     """
     Enregistre une interaction d'agent pour l'analyse scientifique.
 
     Args:
         agent_name (str): Nom de l'agent (ex: "Auditor", "Fixer").
         model_used (str): Modèle LLM utilisé (ex: "gemini-1.5-flash").
+        file_analysed (str): Le fichier analysé.
         action (ActionType): Le type d'action effectué (utiliser l'Enum ActionType).
         details (dict): Dictionnaire contenant les détails. DOIT contenir 'input_prompt' et 'output_response'.
         status (str): "SUCCESS" ou "FAILURE".
@@ -62,8 +63,9 @@ def log_experiment(agent_name: str, model_used: str, action: ActionType, details
     entry = {
         "id": str(uuid.uuid4()),  # ID unique pour éviter les doublons lors de la fusion des données
         "timestamp": datetime.now().isoformat(),
-        "agent": agent_name,
-        "model": model_used,
+        "agent_name": agent_name,
+        "model_used": model_used,
+        "file_analysed": file_analysed,
         "action": action_str,
         "details": details,
         "status": status

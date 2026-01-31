@@ -20,7 +20,7 @@ def main():
         sys.exit(1)
 
     print(f"🚀 DEMARRAGE SUR : {args.target_dir}")
-    log_experiment("System", "Tool_Runner", ActionType.ANALYSIS, {"Target": args.target_dir, "input_prompt": "N/A", "output_response": "N/A"}, "INFO")
+    log_experiment("System", "Tool_Runner", args.target_dir, ActionType.ANALYSIS, {"Target": args.target_dir, "input_prompt": "N/A", "output_response": "N/A"}, "INFO")
 
     # 1. Find all Python files in the target directory
     py_files = [f for f in list_files(args.target_dir) if not f.endswith("_test.py")]
@@ -71,7 +71,7 @@ def main():
 
         except Exception as e:
             print(f"❌ CRITICAL ERROR processing {file_path}: {e}")
-            log_experiment("System", "Tool_Runner", ActionType.DEBUG, {"file": file_path, "error": str(e), "input_prompt": "N/A", "output_response": "N/A"}, "FAILURE")
+            log_experiment("System", "Tool_Runner", file_path, ActionType.DEBUG, {"file": file_path, "error": str(e), "input_prompt": "N/A", "output_response": "N/A"}, "FAILURE")
 
     print("\n✅ MISSION_COMPLETE: All files processed.")
 
