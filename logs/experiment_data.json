@@ -1,11 +1,332 @@
 [
-  {
-    "id": "9e82e9b0-9b43-4a78-af43-d5d5ef848a2f",
-    "timestamp": "2025-12-26T01:26:41.177789",
-    "agent": "System",
-    "model": "unknown",
-    "action": "STARTUP",
-    "details": "Target: ./sandbox",
-    "status": "INFO"
-  }
+    {
+        "id": "d4bc2804-71cd-41ee-914a-d7ba203ef2e3",
+        "timestamp": "2026-01-29T22:52:04.830572",
+        "agent": "System",
+        "model": "Tool_Runner",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "Target": "sandbox",
+            "input_prompt": "N/A",
+            "output_response": "N/A"
+        },
+        "status": "INFO"
+    },
+    {
+        "id": "5265f5bb-1ff1-4789-b0f0-7117d105d435",
+        "timestamp": "2026-01-29T22:52:16.226836",
+        "agent": "Auditor",
+        "model": "gemini-2.5-flash",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    import os\nimport sys\nimport json\nimport time\nimport math # Unused\nimport random # Unused\n\n# GLOBAL VARIABLES (Bad practice)\nDB_PATH = \"C:\\\\Users\\\\Admin\\\\production_db.json\" # Security: Absolute path\nAPI_KEY = \"12345-ABCDE-SECRET-KEY\" # Security: Hardcoded credential\nusers = []\n\nclass data_processor: # PEP8 Violation: Class name\n    def __init__(self):\n        self.cache = {}\n        self.error_count = 0\n\n    def load_data(self, f):\n        # Resource Leak: File opened but never closed\n        # Logic: Mode 'r' assumed but not handled if missing\n        file = open(f, 'r')\n        raw = file.read()\n        return raw.split('\\n')\n\n    def parse_user_string(self, raw_str):\n        # Fragile code: crashes if format isn't exact\n        parts = raw_str.split(',')\n        u = {}\n        u['id'] = parts[0]\n        u['name'] = parts[1]\n        u['role'] = parts[2]\n        \n        # SYNTAX ERROR 1: Missing colon\n        if u['role'] == \"admin\"\n            u['permissions'] = \"ALL\"\n        else:\n            u['permissions'] = \"READ_ONLY\"\n            \n        return u\n\n    def batch_process(self, file_path):\n        data = self.load_data(file_path)\n        processed = []\n        \n        # Logic Error: Modifying list while iterating? No, but index error potential\n        for i in range(len(data) + 1): # Logic Bug: IndexError (off-by-one)\n            line = data[i]\n            if line == \"\": continue\n            \n            # SYNTAX ERROR 2: Assignment in if-statement\n            if obj = self.parse_user_string(line): \n                processed.append(obj)\n                \n        return processed\n\n    def calculate_stats(self, u_list):\n        total_age = 0\n        count = 0\n        \n        for u in u_list:\n            # Logic: Assuming 'age' exists (it wasn't parsed above!)\n            # Type Error: 'age' is likely a string if parsed from CSV\n            total_age += u['age'] \n            count += 1\n            \n        # Logic: Division by zero risk\n        return total_age / count \n\n    def backup_system(self):\n        # SECURITY CRITICAL: Injection Vulnerability\n        # If 'user_input' comes from outside, this is RCE.\n        # Also, usage of os.system is discouraged.\n        os.system(\"cp -r ./data /tmp/backup\") \n\n    def crazy_logic(self, value):\n        # Spaghetti Code / Cognitive Complexity\n        if value > 10:\n            if value < 20:\n                return \"Medium\"\n            else:\n                if value > 50:\n                    return \"Huge\"\n                else:\n                    return \"Big\"\n        elif value == 0:\n            return \"Zero\"\n        else:\n            # SYNTAX ERROR 3: Indentation error or missing pass\n            \n    def save_report(self, data):\n        # Security: Writing outside sandbox\n        path = \"/var/log/app_report.txt\"\n        with open(path, \"w\") as f:\n            f.write(str(data))\n\n# ENTRY POINT\n# Bug: This code runs on import (should be under if __name__ == \"__main__\":)\ndp = data_processor()\nprint(\"System Initialized\")\n    REPORT:\n    {'report': \"************* Module buggy_code\\nsandbox\\\\buggy_code.py:34:32: E0001: Parsing failed: 'expected ':' (<unknown>, line 34)' (syntax-error)\\n\", 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan for the provided code, addressing the identified issues:\n\n*   **Fix Syntax Errors:**\n    *   Add a colon to the `if` statement in `parse_user_string`.\n    *   Correct the assignment within the `if` statement in `batch_process` (separate assignment from condition).\n    *   Resolve the indentation error or add `pass` in the `else` block of `crazy_logic`.\n*   **Address Security Vulnerabilities:**\n    *   Remove hardcoded `API_KEY` and `DB_PATH`; use environment variables or a secure configuration system.\n    *   Refactor `backup_system` to use the `subprocess` module instead of `os.system`, and ensure paths are not user-controlled or are properly sanitized.\n    *   Avoid writing to sensitive system paths like `/var/log/` in `save_report`; use a configurable, application-specific directory.\n*   **Improve Resource Management:**\n    *   Use `with open(...)` in `load_data` to ensure files are properly closed, even if errors occur.\n*   **Enhance Robustness and Error Handling:**\n    *   Add error handling (e.g., `try-except` blocks or length checks) in `parse_user_string` to gracefully handle malformed input strings.\n    *   Correct the `IndexError` in `batch_process` by iterating correctly (e.g., `for line in data:`).\n    *   Modify `parse_user_string` to include an 'age' field if it's expected, or remove the assumption in `calculate_stats`. Ensure parsed numeric data is converted to the correct type (e.g., `int()`).\n    *   Add a check for an empty `u_list` in `calculate_stats` to prevent division by zero.\n*   **Improve Code Structure and Maintainability:**\n    *   Remove unused imports (`math`, `random`).\n    *   Encapsulate global variables (`DB_PATH`, `API_KEY`, `users`) within classes or functions, or manage them via a proper configuration system.\n    *   Rename `data_processor` to `DataProcessor` to comply with PEP8 class naming conventions.\n    *   Refactor `crazy_logic` to reduce cognitive complexity, possibly using `elif` or a dictionary mapping.\n    *   Wrap the entry point code (`dp = data_processor()`, `print(...)`) within `if __name__ == \"__main__\":` to prevent execution on import."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "912ed1dd-c1e9-4b79-9f76-3c3cfc16fa56",
+        "timestamp": "2026-01-29T22:52:45.336255",
+        "agent": "Fixer",
+        "model": "gemini-2.5-flash",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan for the provided code, addressing the identified issues:\n\n*   **Fix Syntax Errors:**\n    *   Add a colon to the `if` statement in `parse_user_string`.\n    *   Correct the assignment within the `if` statement in `batch_process` (separate assignment from condition).\n    *   Resolve the indentation error or add `pass` in the `else` block of `crazy_logic`.\n*   **Address Security Vulnerabilities:**\n    *   Remove hardcoded `API_KEY` and `DB_PATH`; use environment variables or a secure configuration system.\n    *   Refactor `backup_system` to use the `subprocess` module instead of `os.system`, and ensure paths are not user-controlled or are properly sanitized.\n    *   Avoid writing to sensitive system paths like `/var/log/` in `save_report`; use a configurable, application-specific directory.\n*   **Improve Resource Management:**\n    *   Use `with open(...)` in `load_data` to ensure files are properly closed, even if errors occur.\n*   **Enhance Robustness and Error Handling:**\n    *   Add error handling (e.g., `try-except` blocks or length checks) in `parse_user_string` to gracefully handle malformed input strings.\n    *   Correct the `IndexError` in `batch_process` by iterating correctly (e.g., `for line in data:`).\n    *   Modify `parse_user_string` to include an 'age' field if it's expected, or remove the assumption in `calculate_stats`. Ensure parsed numeric data is converted to the correct type (e.g., `int()`).\n    *   Add a check for an empty `u_list` in `calculate_stats` to prevent division by zero.\n*   **Improve Code Structure and Maintainability:**\n    *   Remove unused imports (`math`, `random`).\n    *   Encapsulate global variables (`DB_PATH`, `API_KEY`, `users`) within classes or functions, or manage them via a proper configuration system.\n    *   Rename `data_processor` to `DataProcessor` to comply with PEP8 class naming conventions.\n    *   Refactor `crazy_logic` to reduce cognitive complexity, possibly using `elif` or a dictionary mapping.\n    *   Wrap the entry point code (`dp = data_processor()`, `print(...)`) within `if __name__ == \"__main__\":` to prevent execution on import.\n    CODE:\n    import os\nimport sys\nimport json\nimport time\nimport math # Unused\nimport random # Unused\n\n# GLOBAL VARIABLES (Bad practice)\nDB_PATH = \"C:\\\\Users\\\\Admin\\\\production_db.json\" # Security: Absolute path\nAPI_KEY = \"12345-ABCDE-SECRET-KEY\" # Security: Hardcoded credential\nusers = []\n\nclass data_processor: # PEP8 Violation: Class name\n    def __init__(self):\n        self.cache = {}\n        self.error_count = 0\n\n    def load_data(self, f):\n        # Resource Leak: File opened but never closed\n        # Logic: Mode 'r' assumed but not handled if missing\n        file = open(f, 'r')\n        raw = file.read()\n        return raw.split('\\n')\n\n    def parse_user_string(self, raw_str):\n        # Fragile code: crashes if format isn't exact\n        parts = raw_str.split(',')\n        u = {}\n        u['id'] = parts[0]\n        u['name'] = parts[1]\n        u['role'] = parts[2]\n        \n        # SYNTAX ERROR 1: Missing colon\n        if u['role'] == \"admin\"\n            u['permissions'] = \"ALL\"\n        else:\n            u['permissions'] = \"READ_ONLY\"\n            \n        return u\n\n    def batch_process(self, file_path):\n        data = self.load_data(file_path)\n        processed = []\n        \n        # Logic Error: Modifying list while iterating? No, but index error potential\n        for i in range(len(data) + 1): # Logic Bug: IndexError (off-by-one)\n            line = data[i]\n            if line == \"\": continue\n            \n            # SYNTAX ERROR 2: Assignment in if-statement\n            if obj = self.parse_user_string(line): \n                processed.append(obj)\n                \n        return processed\n\n    def calculate_stats(self, u_list):\n        total_age = 0\n        count = 0\n        \n        for u in u_list:\n            # Logic: Assuming 'age' exists (it wasn't parsed above!)\n            # Type Error: 'age' is likely a string if parsed from CSV\n            total_age += u['age'] \n            count += 1\n            \n        # Logic: Division by zero risk\n        return total_age / count \n\n    def backup_system(self):\n        # SECURITY CRITICAL: Injection Vulnerability\n        # If 'user_input' comes from outside, this is RCE.\n        # Also, usage of os.system is discouraged.\n        os.system(\"cp -r ./data /tmp/backup\") \n\n    def crazy_logic(self, value):\n        # Spaghetti Code / Cognitive Complexity\n        if value > 10:\n            if value < 20:\n                return \"Medium\"\n            else:\n                if value > 50:\n                    return \"Huge\"\n                else:\n                    return \"Big\"\n        elif value == 0:\n            return \"Zero\"\n        else:\n            # SYNTAX ERROR 3: Indentation error or missing pass\n            \n    def save_report(self, data):\n        # Security: Writing outside sandbox\n        path = \"/var/log/app_report.txt\"\n        with open(path, \"w\") as f:\n            f.write(str(data))\n\n# ENTRY POINT\n# Bug: This code runs on import (should be under if __name__ == \"__main__\":)\ndp = data_processor()\nprint(\"System Initialized\")\n    ",
+            "output_response": "import os\nimport sys\nimport json\nimport time\nimport subprocess # Added for backup_system\n\n# Removed GLOBAL VARIABLES (DB_PATH, API_KEY, users) as they are not used in the provided functions\n# and should be managed via environment variables or a config system if needed.\n\nclass DataProcessor: # Renamed class to comply with PEP8\n    def __init__(self):\n        self.cache = {}\n        self.error_count = 0\n        # Configuration can be loaded here, e.g., from environment variables\n        # self.db_path = os.getenv(\"DB_PATH\", \"default_db.json\")\n        # self.api_key = os.getenv(\"API_KEY\", \"default_key\")\n\n    def load_data(self, f):\n        \"\"\"\n        Loads data from a file, ensuring proper file closure.\n        Handles FileNotFoundError and other potential IO errors.\n        \"\"\"\n        try:\n            with open(f, 'r') as file: # Use with statement for proper resource management\n                raw = file.read()\n                return raw.split('\\n')\n        except FileNotFoundError:\n            print(f\"Error: File not found at {f}\", file=sys.stderr)\n            return []\n        except Exception as e:\n            print(f\"Error loading data from {f}: {e}\", file=sys.stderr)\n            return []\n\n    def parse_user_string(self, raw_str):\n        \"\"\"\n        Parses a user string into a dictionary, with error handling.\n        Expects format: id,name,role,age.\n        Converts 'id' and 'age' to integers.\n        \"\"\"\n        try:\n            parts = raw_str.split(',')\n            # Expecting format: id,name,role,age\n            if len(parts) < 4:\n                print(f\"Warning: Malformed user string (too few parts): '{raw_str}'\", file=sys.stderr)\n                return None\n\n            u = {}\n            u['id'] = int(parts[0]) # Convert to int\n            u['name'] = parts[1]\n            u['role'] = parts[2]\n            u['age'] = int(parts[3]) # Convert to int\n\n            if u['role'] == \"admin\": # Added colon (Syntax Error Fix)\n                u['permissions'] = \"ALL\"\n            else:\n                u['permissions'] = \"READ_ONLY\"\n\n            return u\n        except (ValueError, IndexError) as e: # Added error handling for malformed input\n            print(f\"Error parsing user string '{raw_str}': {e}\", file=sys.stderr)\n            return None\n\n    def batch_process(self, file_path):\n        \"\"\"\n        Processes a batch of user data from a file.\n        Corrects iteration and handles parsing errors.\n        \"\"\"\n        data = self.load_data(file_path)\n        processed = []\n\n        for line in data: # Corrected iteration to avoid IndexError\n            if not line.strip(): # Skip empty lines more robustly\n                continue\n\n            obj = self.parse_user_string(line) # Separated assignment from condition (Syntax Error Fix)\n            if obj is not None: # Check if parsing was successful\n                processed.append(obj)\n\n        return processed\n\n    def calculate_stats(self, u_list):\n        \"\"\"\n        Calculates the average age from a list of user dictionaries.\n        Handles division by zero for empty lists.\n        Assumes 'age' field is present and is an integer.\n        \"\"\"\n        total_age = 0\n        count = 0\n\n        if not u_list: # Check for empty list to prevent division by zero\n            return 0.0 # Return a float for consistency\n\n        for u in u_list:\n            # 'age' is now expected to be an int due to parse_user_string modification\n            total_age += u['age']\n            count += 1\n\n        return total_age / count\n\n    def backup_system(self):\n        \"\"\"\n        Performs a system backup using subprocess for enhanced security.\n        Avoids os.system and potential injection vulnerabilities.\n        \"\"\"\n        # Paths should be configurable, not hardcoded or user-controlled directly\n        source_path = \"./data\"\n        # Use environment variable for backup path or a secure default\n        backup_path = os.getenv(\"BACKUP_PATH\", \"/tmp/app_backups\")\n\n        try:\n            # Ensure backup directory exists\n            os.makedirs(backup_path, exist_ok=True)\n\n            # Using subprocess.run with a list of arguments is safer\n            subprocess.run([\"cp\", \"-r\", source_path, backup_path], check=True)\n            print(f\"Backup successful: {source_path} to {backup_path}\")\n        except subprocess.CalledProcessError as e:\n            print(f\"Error during backup: Command failed with exit code {e.returncode}: {e}\", file=sys.stderr)\n        except FileNotFoundError:\n            print(f\"Error: 'cp' command not found. Is it in PATH?\", file=sys.stderr)\n        except Exception as e:\n            print(f\"An unexpected error occurred during backup: {e}\", file=sys.stderr)\n\n    def crazy_logic(self, value):\n        \"\"\"\n        Refactored logic to reduce cognitive complexity using elif.\n        Ensures all code paths return a value.\n        \"\"\"\n        if value == 0:\n            return \"Zero\"\n        elif value > 50:\n            return \"Huge\"\n        elif value > 20: # Implies 20 < value <= 50\n            return \"Big\"\n        elif value > 10: # Implies 10 < value <= 20\n            return \"Medium\"\n        else: # Implies value <= 10 and value != 0\n            return \"Small\" # Added a return for all paths (Syntax Error Fix)\n\n    def save_report(self, data):\n        \"\"\"\n        Saves a report to a configurable, application-specific directory.\n        Avoids writing to sensitive system paths.\n        \"\"\"\n        # Use environment variable for report directory or a secure default\n        report_dir = os.getenv('REPORT_DIR', './reports')\n        os.makedirs(report_dir, exist_ok=True) # Ensure the directory exists\n\n        path = os.path.join(report_dir, \"app_report.txt\")\n        try:\n            with open(path, \"w\") as f:\n                f.write(str(data))\n            print(f\"Report saved to {path}\")\n        except IOError as e:\n            print(f\"Error saving report to {path}: {e}\", file=sys.stderr)\n\n# Entry point wrapped in if __name__ == \"__main__\": to prevent execution on import\nif __name__ == \"__main__\":\n    dp = DataProcessor()\n    print(\"System Initialized\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "da4829f3-8386-4c84-baf2-42d8e6469d02",
+        "timestamp": "2026-01-29T22:52:45.345844",
+        "agent": "Judge",
+        "model": "Tool",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "4dad6a4c-e75e-4e52-882c-f69785a9ac5b",
+        "timestamp": "2026-01-30T22:57:56.873172",
+        "agent": "System",
+        "model": "Tool_Runner",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "Target": "sandbox",
+            "input_prompt": "N/A",
+            "output_response": "N/A"
+        },
+        "status": "INFO"
+    },
+    {
+        "id": "6ed43321-c9bd-4e98-a123-63c990f8a050",
+        "timestamp": "2026-01-30T22:58:01.336574",
+        "agent": "Auditor",
+        "model": "gemini-2.5-flash",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    def calculate_class_average(scores):\n    total_score = 0\n    student_count = 0\n    \n    for score in scores:\n        total_score += score\n        student_count += 1\n        \n    # Calculate the average\n    average = total_score / student_count\n    \n    return average\n\n# --- Test Cases ---\n\n# 1. A standard class with grades\nmath_class = [85, 90, 78, 92, 88]\nprint(f\"Math Class Average: {calculate_class_average(math_class)}\")\n\n# 2. A class that hasn't taken the exam yet (Empty list)\nhistory_class = []\nprint(f\"History Class Average: {calculate_class_average(history_class)}\")\n    REPORT:\n    {'report': '************* Module buggy_code\\nsandbox\\\\buggy_code.py:4:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:8:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:11:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:22:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\buggy_code.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\buggy_code.py:1:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 5.00/10 (previous run: 3.33/10, +1.67)\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Handle Empty Input:** Add a check for an empty `scores` list at the beginning of `calculate_class_average` to prevent `ZeroDivisionError`. Return 0 or raise a `ValueError` in this case.\n*   **Simplify Calculation:** Replace the manual loop for summing and counting with built-in `sum()` and `len()` functions.\n*   **Add Docstrings:** Include a module-level docstring and a docstring for the `calculate_class_average` function.\n*   **Fix Formatting:** Remove trailing whitespace on lines 4, 8, and 11, and ensure the file ends with a newline."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "4f7a3837-bc44-48b3-af0b-63673151e325",
+        "timestamp": "2026-01-30T22:58:09.200690",
+        "agent": "Fixer",
+        "model": "gemini-2.5-flash",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Handle Empty Input:** Add a check for an empty `scores` list at the beginning of `calculate_class_average` to prevent `ZeroDivisionError`. Return 0 or raise a `ValueError` in this case.\n*   **Simplify Calculation:** Replace the manual loop for summing and counting with built-in `sum()` and `len()` functions.\n*   **Add Docstrings:** Include a module-level docstring and a docstring for the `calculate_class_average` function.\n*   **Fix Formatting:** Remove trailing whitespace on lines 4, 8, and 11, and ensure the file ends with a newline.\n    CODE:\n    def calculate_class_average(scores):\n    total_score = 0\n    student_count = 0\n    \n    for score in scores:\n        total_score += score\n        student_count += 1\n        \n    # Calculate the average\n    average = total_score / student_count\n    \n    return average\n\n# --- Test Cases ---\n\n# 1. A standard class with grades\nmath_class = [85, 90, 78, 92, 88]\nprint(f\"Math Class Average: {calculate_class_average(math_class)}\")\n\n# 2. A class that hasn't taken the exam yet (Empty list)\nhistory_class = []\nprint(f\"History Class Average: {calculate_class_average(history_class)}\")\n    ",
+            "output_response": "\"\"\"\nThis module provides a function to calculate the average of a list of scores.\n\"\"\"\n\ndef calculate_class_average(scores):\n    \"\"\"\n    Calculates the average of a list of numerical scores.\n\n    Args:\n        scores (list[int | float]): A list of numerical scores.\n\n    Returns:\n        float: The calculated average of the scores.\n\n    Raises:\n        ValueError: If the input 'scores' list is empty.\n    \"\"\"\n    if not scores:\n        raise ValueError(\"Input 'scores' list cannot be empty.\")\n    \n    return sum(scores) / len(scores)\n\n# --- Test Cases ---\n\n# 1. A standard class with grades\nmath_class = [85, 90, 78, 92, 88]\nprint(f\"Math Class Average: {calculate_class_average(math_class)}\")\n\n# 2. A class that hasn't taken the exam yet (Empty list)\nhistory_class = []\ntry:\n    print(f\"History Class Average: {calculate_class_average(history_class)}\")\nexcept ValueError as e:\n    print(f\"Error for History Class: {e}\")\n\n# Additional test case for floats\nscience_class = [75.5, 80.0, 91.2, 88.3]\nprint(f\"Science Class Average: {calculate_class_average(science_class)}\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "23bee196-6467-49c0-bad9-23b4dfd25117",
+        "timestamp": "2026-01-30T22:58:09.209734",
+        "agent": "Judge",
+        "model": "Tool",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "e32c1520-dbb9-4426-9af5-ad45644a1921",
+        "timestamp": "2026-01-30T23:06:08.552459",
+        "agent": "System",
+        "model": "Tool_Runner",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "Target": "sandbox",
+            "input_prompt": "N/A",
+            "output_response": "N/A"
+        },
+        "status": "INFO"
+    },
+    {
+        "id": "f1d7b28b-70dd-437f-8b62-2464aa57d1ac",
+        "timestamp": "2026-01-30T23:06:12.025742",
+        "agent": "Auditor",
+        "model": "gemini-2.5-flash",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    def process_task_list(tasks):\n    i = 0\n    \n    while i < len(tasks):\n        current_task = tasks[i]\n        \n        # If the task is \"skip\", go to the next iteration immediately\n        if current_task == \"skip\":\n            print(\"Skipping restricted task...\")\n            continue\n        \n        # Otherwise, process the task\n        print(f\"Processing: {current_task}\")\n        \n        # Move to the next task\n        i += 1\n\n# --- Test Case ---\nmy_todo_list = [\"Check Emails\", \"Write Report\", \"skip\", \"Update Website\"]\n\nprint(\"Starting work day...\")\nprocess_task_list(my_todo_list)\nprint(\"Work day finished!\")\n    REPORT:\n    {'report': '************* Module buggy_code\\nsandbox\\\\buggy_code.py:3:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:6:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:11:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:14:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:23:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\buggy_code.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\buggy_code.py:1:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 4.62/10 (previous run: 5.00/10, -0.38)\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix the infinite loop bug:** Change the `while` loop to a `for` loop to iterate directly over `tasks`. This ensures the loop always progresses, even when a task is \"skip\".\n*   **Add docstrings:** Include a module-level docstring and a function-level docstring for `process_task_list`.\n*   **Remove trailing whitespace:** Eliminate unnecessary spaces at the end of lines.\n*   **Add a final newline:** Ensure the file ends with a newline character."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "d8e7b286-32da-45df-8bc1-5d435c60bc96",
+        "timestamp": "2026-01-30T23:06:18.430621",
+        "agent": "Fixer",
+        "model": "gemini-2.5-flash",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix the infinite loop bug:** Change the `while` loop to a `for` loop to iterate directly over `tasks`. This ensures the loop always progresses, even when a task is \"skip\".\n*   **Add docstrings:** Include a module-level docstring and a function-level docstring for `process_task_list`.\n*   **Remove trailing whitespace:** Eliminate unnecessary spaces at the end of lines.\n*   **Add a final newline:** Ensure the file ends with a newline character.\n    CODE:\n    def process_task_list(tasks):\n    i = 0\n    \n    while i < len(tasks):\n        current_task = tasks[i]\n        \n        # If the task is \"skip\", go to the next iteration immediately\n        if current_task == \"skip\":\n            print(\"Skipping restricted task...\")\n            continue\n        \n        # Otherwise, process the task\n        print(f\"Processing: {current_task}\")\n        \n        # Move to the next task\n        i += 1\n\n# --- Test Case ---\nmy_todo_list = [\"Check Emails\", \"Write Report\", \"skip\", \"Update Website\"]\n\nprint(\"Starting work day...\")\nprocess_task_list(my_todo_list)\nprint(\"Work day finished!\")\n    ",
+            "output_response": "\"\"\"\nThis module provides a function to process a list of tasks,\nwith a special handling for \"skip\" tasks.\n\"\"\"\n\ndef process_task_list(tasks):\n    \"\"\"\n    Processes a list of tasks, printing a message for each.\n    Tasks marked as \"skip\" are explicitly skipped with a message.\n\n    Args:\n        tasks (list): A list of strings, where each string represents a task.\n    \"\"\"\n    for current_task in tasks:\n        # If the task is \"skip\", go to the next iteration immediately\n        if current_task == \"skip\":\n            print(\"Skipping restricted task...\")\n            continue\n        \n        # Otherwise, process the task\n        print(f\"Processing: {current_task}\")\n\n# --- Test Case ---\nmy_todo_list = [\"Check Emails\", \"Write Report\", \"skip\", \"Update Website\"]\n\nprint(\"Starting work day...\")\nprocess_task_list(my_todo_list)\nprint(\"Work day finished!\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "2c1637d2-d3e7-45c7-994d-1ac2c57274a6",
+        "timestamp": "2026-01-30T23:06:18.439708",
+        "agent": "Judge",
+        "model": "Tool",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "053443b9-6b53-4ab9-a0c3-f25b95cb4780",
+        "timestamp": "2026-01-30T23:07:12.309635",
+        "agent": "System",
+        "model": "Tool_Runner",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "Target": "sandbox",
+            "input_prompt": "N/A",
+            "output_response": "N/A"
+        },
+        "status": "INFO"
+    },
+    {
+        "id": "58993672-aa17-4cf1-8f60-111573fe26bd",
+        "timestamp": "2026-01-30T23:07:16.514990",
+        "agent": "Auditor",
+        "model": "gemini-2.5-flash",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    def process_task_list(tasks):\n    i = 0\n    \n    while i < len(tasks):\n        current_task = tasks[i]\n        \n        # If the task is \"skip\", go to the next iteration immediately\n        if current_task == \"skip\":\n            print(\"Skipping restricted task...\")\n            continue\n        \n        # Otherwise, process the task\n        print(f\"Processing: {current_task}\")\n        \n        # Move to the next task\n        i += 1\n\n# --- Test Case ---\nmy_todo_list = [\"Check Emails\", \"Write Report\", \"skip\", \"Update Website\"]\n\nprint(\"Starting work day...\")\nprocess_task_list(my_todo_list)\nprint(\"Work day finished!\")\n    REPORT:\n    {'report': '************* Module buggy_code\\nsandbox\\\\buggy_code.py:3:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:6:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:11:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:14:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:23:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\buggy_code.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\buggy_code.py:1:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 4.62/10 (previous run: 4.62/10, +0.00)\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan based on the provided code and Pylint report:\n\n*   **Remove Trailing Whitespace:** Eliminate any trailing whitespace characters on lines 3, 6, 11, and 14.\n*   **Add Final Newline:** Ensure the file ends with a newline character.\n*   **Add Module Docstring:** Include a docstring at the beginning of the file to describe its overall purpose.\n*   **Add Function Docstring:** Add a docstring to the `process_task_list` function, explaining its functionality and parameters.\n*   **Improve Iteration:** Replace the `while` loop with a more Pythonic `for` loop to iterate directly over the `tasks` list, simplifying the code by removing manual index management."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "73287553-f799-42f0-bc3c-97c3a0695604",
+        "timestamp": "2026-01-30T23:07:25.087015",
+        "agent": "Fixer",
+        "model": "gemini-2.5-flash",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan based on the provided code and Pylint report:\n\n*   **Remove Trailing Whitespace:** Eliminate any trailing whitespace characters on lines 3, 6, 11, and 14.\n*   **Add Final Newline:** Ensure the file ends with a newline character.\n*   **Add Module Docstring:** Include a docstring at the beginning of the file to describe its overall purpose.\n*   **Add Function Docstring:** Add a docstring to the `process_task_list` function, explaining its functionality and parameters.\n*   **Improve Iteration:** Replace the `while` loop with a more Pythonic `for` loop to iterate directly over the `tasks` list, simplifying the code by removing manual index management.\n    CODE:\n    def process_task_list(tasks):\n    i = 0\n    \n    while i < len(tasks):\n        current_task = tasks[i]\n        \n        # If the task is \"skip\", go to the next iteration immediately\n        if current_task == \"skip\":\n            print(\"Skipping restricted task...\")\n            continue\n        \n        # Otherwise, process the task\n        print(f\"Processing: {current_task}\")\n        \n        # Move to the next task\n        i += 1\n\n# --- Test Case ---\nmy_todo_list = [\"Check Emails\", \"Write Report\", \"skip\", \"Update Website\"]\n\nprint(\"Starting work day...\")\nprocess_task_list(my_todo_list)\nprint(\"Work day finished!\")\n    ",
+            "output_response": "\"\"\"This module provides a function to process a list of tasks.\"\"\"\n\ndef process_task_list(tasks):\n    \"\"\"\n    Processes a list of tasks, skipping any marked as \"skip\".\n\n    Args:\n        tasks (list): A list of strings, where each string represents a task.\n                      Tasks equal to \"skip\" will be ignored.\n    \"\"\"\n    for current_task in tasks:\n        # If the task is \"skip\", go to the next iteration immediately\n        if current_task == \"skip\":\n            print(\"Skipping restricted task...\")\n            continue\n\n        # Otherwise, process the task\n        print(f\"Processing: {current_task}\")\n\n# --- Test Case ---\nmy_todo_list = [\"Check Emails\", \"Write Report\", \"skip\", \"Update Website\"]\n\nprint(\"Starting work day...\")\nprocess_task_list(my_todo_list)\nprint(\"Work day finished!\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "04017de0-e22a-4b4c-8845-93fa18980987",
+        "timestamp": "2026-01-30T23:07:25.096020",
+        "agent": "Judge",
+        "model": "Tool",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "be3a5a30-794b-4013-8fbf-4391d9a3786a",
+        "timestamp": "2026-01-30T23:08:23.011692",
+        "agent": "System",
+        "model": "Tool_Runner",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "Target": "sandbox",
+            "input_prompt": "N/A",
+            "output_response": "N/A"
+        },
+        "status": "INFO"
+    },
+    {
+        "id": "a0dd4b0f-c7d5-4b5e-a859-b7e7cdc38c73",
+        "timestamp": "2026-01-30T23:08:27.687936",
+        "agent": "Auditor",
+        "model": "gemini-2.5-flash",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    def calculate_factorial(n):\n    # Base case: if n is 1, we stop recursing\n    if n == 1:\n        return 1\n    \n    # Recursive step: n * (n - 1)\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. THIS WILL CRASH (RecursionError)\nprint(\"Calculating factorial for -1...\")\nprint(calculate_factorial(-1))\n    REPORT:\n    {'report': '************* Module buggy_code\\nsandbox\\\\buggy_code.py:5:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:16:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\buggy_code.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\buggy_code.py:1:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 4.29/10 (previous run: 4.62/10, -0.33)\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Input Validation:**\n    *   Add a check to raise a `ValueError` if `n` is negative, as factorial is not defined for negative numbers.\n    *   (Optional but recommended) Add a check to raise a `TypeError` if `n` is not an integer.\n*   **Handle Base Case for Zero:** Modify the base case to return `1` if `n` is `0` (since `0! = 1`).\n*   **Add Docstrings:**\n    *   Include a module-level docstring (`C0114`).\n    *   Add a function-level docstring for `calculate_factorial` explaining its purpose, parameters, and return value (`C0116`).\n*   **Fix Formatting:**\n    *   Remove trailing whitespace (`C0303`).\n    *   Ensure the file ends with a newline character (`C0304`)."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "e76cd8a6-9e5f-44f3-be0a-199313381e64",
+        "timestamp": "2026-01-30T23:08:38.660721",
+        "agent": "Fixer",
+        "model": "gemini-2.5-flash",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Input Validation:**\n    *   Add a check to raise a `ValueError` if `n` is negative, as factorial is not defined for negative numbers.\n    *   (Optional but recommended) Add a check to raise a `TypeError` if `n` is not an integer.\n*   **Handle Base Case for Zero:** Modify the base case to return `1` if `n` is `0` (since `0! = 1`).\n*   **Add Docstrings:**\n    *   Include a module-level docstring (`C0114`).\n    *   Add a function-level docstring for `calculate_factorial` explaining its purpose, parameters, and return value (`C0116`).\n*   **Fix Formatting:**\n    *   Remove trailing whitespace (`C0303`).\n    *   Ensure the file ends with a newline character (`C0304`).\n    CODE:\n    def calculate_factorial(n):\n    # Base case: if n is 1, we stop recursing\n    if n == 1:\n        return 1\n    \n    # Recursive step: n * (n - 1)\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. THIS WILL CRASH (RecursionError)\nprint(\"Calculating factorial for -1...\")\nprint(calculate_factorial(-1))\n    ",
+            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n    \n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "9d5df032-a988-4e94-a5e9-21a090a44dde",
+        "timestamp": "2026-01-30T23:08:38.670273",
+        "agent": "Judge",
+        "model": "Tool",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "0c17244b-bee1-493e-971a-e5f74f3d200f",
+        "timestamp": "2026-01-31T23:17:21.673439",
+        "agent": "System",
+        "model": "Tool_Runner",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "Target": "sandbox",
+            "input_prompt": "N/A",
+            "output_response": "N/A"
+        },
+        "status": "INFO"
+    },
+    {
+        "id": "b4e091f5-ac3e-420f-9d08-e1d289a598aa",
+        "timestamp": "2026-01-31T23:17:25.629845",
+        "agent": "Auditor",
+        "model": "gemini-2.5-flash",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n    \n    # Recursive step: n * (n - 1)!\n    return n *\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    REPORT:\n    {'report': \"************* Module buggy_code\\nsandbox\\\\buggy_code.py:35:15: E0001: Parsing failed: 'invalid syntax (<unknown>, line 35)' (syntax-error)\\n\", 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan based on the code and Pylint report:\n\n*   **Fix the Syntax Error:** Complete the recursive step in `calculate_factorial` by adding the missing recursive call: `return n * calculate_factorial(n - 1)`.\n*   **Add Type Hinting:** Enhance code clarity and maintainability by adding type hints to the function signature (e.g., `def calculate_factorial(n: int) -> int:`).\n*   **(Optional) Consider Iterative Approach:** For very large inputs, a recursive factorial can hit Python's recursion depth limit. An iterative solution (using a loop) would be more robust and performant for such cases."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "d23b3006-de60-467f-b478-f1f11158f168",
+        "timestamp": "2026-01-31T23:17:29.586172",
+        "agent": "Fixer",
+        "model": "gemini-2.5-flash",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan based on the code and Pylint report:\n\n*   **Fix the Syntax Error:** Complete the recursive step in `calculate_factorial` by adding the missing recursive call: `return n * calculate_factorial(n - 1)`.\n*   **Add Type Hinting:** Enhance code clarity and maintainability by adding type hints to the function signature (e.g., `def calculate_factorial(n: int) -> int:`).\n*   **(Optional) Consider Iterative Approach:** For very large inputs, a recursive factorial can hit Python's recursion depth limit. An iterative solution (using a loop) would be more robust and performant for such cases.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n    \n    # Recursive step: n * (n - 1)!\n    return n *\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    ",
+            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n: int) -> int:\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n    \n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "c27c4cdd-9ade-4d18-9ef6-c678712f4d6f",
+        "timestamp": "2026-01-31T23:17:29.595705",
+        "agent": "Judge",
+        "model": "Tool",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    }
 ]
