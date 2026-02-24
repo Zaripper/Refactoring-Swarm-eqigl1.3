@@ -543,5 +543,123 @@
             "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
         },
         "status": "SUCCESS"
+    },
+    {
+        "id": "2a12d9d2-0d93-47a8-823f-0a0b25659778",
+        "timestamp": "2026-02-24T10:06:44.352011",
+        "agent_name": "System",
+        "model_used": "Tool_Runner",
+        "file_analysed": "sandbox",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "Target": "sandbox",
+            "input_prompt": "N/A",
+            "output_response": "N/A"
+        },
+        "status": "INFO"
+    },
+    {
+        "id": "034b6c38-5626-484c-9edf-903332d56e92",
+        "timestamp": "2026-02-24T10:06:50.179885",
+        "agent_name": "Auditor",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\buggy_code.py",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n = 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n    \n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    REPORT:\n    {'report': \"************* Module buggy_code\\nsandbox\\\\buggy_code.py:26:8: E0001: Parsing failed: 'invalid syntax. Maybe you meant '==' or ':=' instead of '='? (<unknown>, line 26)' (syntax-error)\\n\", 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Change the assignment operator (`=`) to a comparison operator (`<`) in the negative number check: `if n = 0:` should be `if n < 0:`. This is the root cause of the Pylint parsing error."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "cf5a415f-d187-4413-8ca7-5037f0ff614c",
+        "timestamp": "2026-02-24T10:06:53.288942",
+        "agent_name": "Fixer",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\buggy_code.py",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Change the assignment operator (`=`) to a comparison operator (`<`) in the negative number check: `if n = 0:` should be `if n < 0:`. This is the root cause of the Pylint parsing error.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n = 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n    \n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    ",
+            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n    \n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "eabca972-56a2-473f-8a76-06dc2ed58ede",
+        "timestamp": "2026-02-24T10:06:53.305907",
+        "agent_name": "Judge",
+        "model_used": "Tool",
+        "file_analysed": "sandbox\\buggy_code.py",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "86e8a717-beda-4804-a462-52f6a34dc669",
+        "timestamp": "2026-02-24T10:08:42.852243",
+        "agent_name": "System",
+        "model_used": "Tool_Runner",
+        "file_analysed": "sandbox",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "Target": "sandbox",
+            "input_prompt": "N/A",
+            "output_response": "N/A"
+        },
+        "status": "INFO"
+    },
+    {
+        "id": "89edec02-3a9c-4271-b5bf-bbc3b9dcb5e0",
+        "timestamp": "2026-02-24T10:08:47.386886",
+        "agent_name": "Auditor",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\buggy_code.py",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n  0:\n        return 1\n    \n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    REPORT:\n    {'report': \"************* Module buggy_code\\nsandbox\\\\buggy_code.py:31:11: E0001: Parsing failed: 'invalid syntax (<unknown>, line 31)' (syntax-error)\\n\", 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Correct the base case condition `if n 0:` to `if n == 0:` to resolve the `E0001` parsing error.\n*   **Consider Iterative Implementation:** Refactor the function to use an iterative approach (e.g., a `for` loop) instead of recursion to improve performance and avoid potential `RecursionError` for very large inputs."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "525c6860-e6dc-4266-a2ef-2d703e73db2d",
+        "timestamp": "2026-02-24T10:08:54.622597",
+        "agent_name": "Fixer",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\buggy_code.py",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\buggy_code.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Correct the base case condition `if n 0:` to `if n == 0:` to resolve the `E0001` parsing error.\n*   **Consider Iterative Implementation:** Refactor the function to use an iterative approach (e.g., a `for` loop) instead of recursion to improve performance and avoid potential `RecursionError` for very large inputs.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n  0:\n        return 1\n    \n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    ",
+            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "674d932b-cbeb-48fe-bcf9-5dc00d5cd26f",
+        "timestamp": "2026-02-24T10:08:54.640160",
+        "agent_name": "Judge",
+        "model_used": "Tool",
+        "file_analysed": "sandbox\\buggy_code.py",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
     }
 ]
