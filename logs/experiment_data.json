@@ -1,7 +1,7 @@
 [
     {
-        "id": "cdc49a7e-5407-41ea-9d24-9f63ae1c51bb",
-        "timestamp": "2026-01-31T23:44:56.089915",
+        "id": "61a259a5-19ad-4051-98ed-9f31666f8646",
+        "timestamp": "2026-02-28T22:26:27.542825",
         "agent_name": "System",
         "model_used": "Tool_Runner",
         "file_analysed": "sandbox",
@@ -14,640 +14,36 @@
         "status": "INFO"
     },
     {
-        "id": "af632256-7445-44a9-b3c0-81d72cbc5a0f",
-        "timestamp": "2026-01-31T23:44:59.127692",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\buggy_code.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n: int) -> int:\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n\n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n\n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n\n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    REPORT:\n    {'report': '************* Module buggy_code\\nsandbox\\\\buggy_code.py:57:0: C0304: Final newline missing (missing-final-newline)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 9.50/10 (previous run: 8.00/10, +1.50)\\n\\n', 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Add a final newline to the file:** Address the `C0304: Final newline missing` Pylint warning by ensuring the file ends with a blank line.\n*   **Move test cases to a dedicated test file:** For better separation of concerns and maintainability, relocate the test cases (e.g., using `unittest` or `pytest`) into a separate test module. This keeps the main module focused solely on the `calculate_factorial` function."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "d9e653a4-754f-40b4-a490-e3faa51ada15",
-        "timestamp": "2026-01-31T23:45:01.453137",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\buggy_code.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Add a final newline to the file:** Address the `C0304: Final newline missing` Pylint warning by ensuring the file ends with a blank line.\n*   **Move test cases to a dedicated test file:** For better separation of concerns and maintainability, relocate the test cases (e.g., using `unittest` or `pytest`) into a separate test module. This keeps the main module focused solely on the `calculate_factorial` function.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n: int) -> int:\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n\n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n\n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n\n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    ",
-            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n: int) -> int:\n    \"\"\"\n    Calculates the factorial of a non-negative integer using recursion.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n\n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n\n    # Handle Base Case: if n is 0, return 1 (0! = 1)\n    # This also correctly handles 1! as 1 * calculate_factorial(0) = 1 * 1 = 1\n    if n == 0:\n        return 1\n\n    # Recursive step: n * (n - 1)!\n    return n * calculate_factorial(n - 1)"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "ca38086f-e9c8-4771-a4ab-35b9a10ac1d8",
-        "timestamp": "2026-01-31T23:45:01.462132",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\buggy_code.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "e3c81026-6331-4761-8949-408027f1a9b9",
-        "timestamp": "2026-01-31T23:46:31.947164",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "af2ffe36-0735-49c0-aec9-c442d5b5a934",
-        "timestamp": "2026-01-31T23:46:36.560249",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\buggy_code.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    def clean_inventory(items):\n    # Goal: Remove all items that are \"broken\"\n    for item in items:\n        if item[\"status\"] == \"broken\":\n            items.remove(item)\n    return items\n\ninventory = [\n    {\"name\": \"Sword\", \"status\": \"broken\"},\n    {\"name\": \"Shield\", \"status\": \"broken\"},\n    {\"name\": \"Potion\", \"status\": \"good\"}\n]\n\nprint(clean_inventory(inventory)) \n# Output will be wrong! One \"broken\" item will stay.\n    REPORT:\n    {'report': '************* Module buggy_code\\nsandbox\\\\buggy_code.py:14:33: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code.py:15:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\buggy_code.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\buggy_code.py:1:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 4.29/10 (previous run: 9.50/10, -5.21)\\n\\n', 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Correct the core logic:** Avoid modifying the list `items` while iterating over it, as this leads to skipped elements. Instead, create and return a *new* list containing only the items that are *not* broken. A list comprehension is the most Pythonic way to achieve this (e.g., `[item for item in items if item[\"status\"] != \"broken\"]`).\n*   **Add docstrings:**\n    *   Provide a module-level docstring.\n    *   Add a docstring to the `clean_inventory` function, explaining its purpose, arguments, and return value.\n*   **Resolve whitespace issues:**\n    *   Remove trailing whitespace on line 14.\n    *   Ensure the file ends with a final newline character."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "0216114c-da16-4c94-a53f-00a4148f16ea",
-        "timestamp": "2026-01-31T23:46:41.758222",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\buggy_code.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Correct the core logic:** Avoid modifying the list `items` while iterating over it, as this leads to skipped elements. Instead, create and return a *new* list containing only the items that are *not* broken. A list comprehension is the most Pythonic way to achieve this (e.g., `[item for item in items if item[\"status\"] != \"broken\"]`).\n*   **Add docstrings:**\n    *   Provide a module-level docstring.\n    *   Add a docstring to the `clean_inventory` function, explaining its purpose, arguments, and return value.\n*   **Resolve whitespace issues:**\n    *   Remove trailing whitespace on line 14.\n    *   Ensure the file ends with a final newline character.\n    CODE:\n    def clean_inventory(items):\n    # Goal: Remove all items that are \"broken\"\n    for item in items:\n        if item[\"status\"] == \"broken\":\n            items.remove(item)\n    return items\n\ninventory = [\n    {\"name\": \"Sword\", \"status\": \"broken\"},\n    {\"name\": \"Shield\", \"status\": \"broken\"},\n    {\"name\": \"Potion\", \"status\": \"good\"}\n]\n\nprint(clean_inventory(inventory)) \n# Output will be wrong! One \"broken\" item will stay.\n    ",
-            "output_response": "\"\"\"Module for managing inventory and cleaning broken items.\"\"\"\n\ndef clean_inventory(items):\n    \"\"\"\n    Removes all items with a \"broken\" status from an inventory list.\n\n    Args:\n        items (list): A list of dictionaries, where each dictionary\n                      represents an item and must contain a \"status\" key.\n\n    Returns:\n        list: A new list containing only the items that are not \"broken\".\n    \"\"\"\n    return [item for item in items if item[\"status\"] != \"broken\"]\n\ninventory = [\n    {\"name\": \"Sword\", \"status\": \"broken\"},\n    {\"name\": \"Shield\", \"status\": \"broken\"},\n    {\"name\": \"Potion\", \"status\": \"good\"}\n]\n\nprint(clean_inventory(inventory))"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "b99a3560-5f8b-4c12-9994-9d3948fd2a04",
-        "timestamp": "2026-01-31T23:46:41.767726",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\buggy_code.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "c96dcfee-13db-47dd-85dc-29a8536b15df",
-        "timestamp": "2026-01-31T23:47:08.071692",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "27a56baf-9460-438f-bcc8-467614137334",
-        "timestamp": "2026-01-31T23:47:10.649836",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_codejkhkjgfdhjk.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\buggy_codejkhkjgfdhjk.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    def get_user_email(user_data):\n    # Bug: If 'contact' or 'email' is missing, the whole app crashes\n    return user_data[\"profile\"][\"contact\"][\"email\"]\n\nuser_a = {\"profile\": {\"contact\": {\"email\": \"test@test.com\"}}}\nuser_b = {\"profile\": {\"contact\": {}}} # This will trigger a KeyError\n\nprint(get_user_email(user_a))\nprint(get_user_email(user_b))\n    REPORT:\n    {'report': '************* Module buggy_codejkhkjgfdhjk\\nsandbox\\\\buggy_codejkhkjgfdhjk.py:9:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\buggy_codejkhkjgfdhjk.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\buggy_codejkhkjgfdhjk.py:1:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n-----------------------------------\\nYour code has been rated at 5.00/10\\n\\n', 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Implement Robust Error Handling:** Use `dict.get()` with default values to safely access nested keys, preventing `KeyError` if 'profile', 'contact', or 'email' are missing. Return `None` or an empty string if the email cannot be found.\n*   **Add Module Docstring:** Include a docstring at the top of the file explaining its purpose.\n*   **Add Function Docstring:** Provide a docstring for `get_user_email` explaining what it does, its parameters, and what it returns.\n*   **Add Final Newline:** Ensure the file ends with a blank line."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "78a321e6-1022-4cd2-96ed-ddebf43be20a",
-        "timestamp": "2026-01-31T23:47:17.982288",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_codejkhkjgfdhjk.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\buggy_codejkhkjgfdhjk.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Implement Robust Error Handling:** Use `dict.get()` with default values to safely access nested keys, preventing `KeyError` if 'profile', 'contact', or 'email' are missing. Return `None` or an empty string if the email cannot be found.\n*   **Add Module Docstring:** Include a docstring at the top of the file explaining its purpose.\n*   **Add Function Docstring:** Provide a docstring for `get_user_email` explaining what it does, its parameters, and what it returns.\n*   **Add Final Newline:** Ensure the file ends with a blank line.\n    CODE:\n    def get_user_email(user_data):\n    # Bug: If 'contact' or 'email' is missing, the whole app crashes\n    return user_data[\"profile\"][\"contact\"][\"email\"]\n\nuser_a = {\"profile\": {\"contact\": {\"email\": \"test@test.com\"}}}\nuser_b = {\"profile\": {\"contact\": {}}} # This will trigger a KeyError\n\nprint(get_user_email(user_a))\nprint(get_user_email(user_b))\n    ",
-            "output_response": "\"\"\"\nThis module provides a utility function to safely retrieve a user's email\nfrom a nested dictionary structure.\n\"\"\"\n\ndef get_user_email(user_data):\n    \"\"\"\n    Safely retrieves the user's email from a nested dictionary.\n\n    This function navigates through 'profile' and 'contact' keys within\n    the user_data dictionary. It uses dict.get() to prevent KeyErrors\n    if any intermediate keys or the final 'email' key are missing.\n\n    Args:\n        user_data (dict): A dictionary containing user information,\n                          expected to have a structure like:\n                          {'profile': {'contact': {'email': '...'}}}\n\n    Returns:\n        str or None: The user's email address if found, otherwise None.\n    \"\"\"\n    # Safely get the 'profile' dictionary, defaulting to an empty dict if not present\n    profile = user_data.get('profile', {})\n    # Safely get the 'contact' dictionary from 'profile', defaulting to an empty dict\n    contact = profile.get('contact', {})\n    # Safely get the 'email' from 'contact', returning None if not found\n    email = contact.get('email')\n    return email\n\nuser_a = {\"profile\": {\"contact\": {\"email\": \"test@test.com\"}}}\nuser_b = {\"profile\": {\"contact\": {}}} # This will no longer trigger a KeyError\n\nprint(get_user_email(user_a))\nprint(get_user_email(user_b))"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "4913e0e3-6183-4d82-b376-bc64b2c441db",
-        "timestamp": "2026-01-31T23:47:17.991797",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\buggy_codejkhkjgfdhjk.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "c47fd656-343f-4902-b546-a494fb3d85ab",
-        "timestamp": "2026-01-31T23:48:18.621934",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "a3e5e821-3579-4e90-858f-28f98b2451af",
-        "timestamp": "2026-01-31T23:48:26.034991",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code_infiniteloop.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\buggy_code_infiniteloop.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    def countdown_to_zero(n):\n    print(f\"Starting countdown from {n}...\")\n    while n != 0:\n        # Bug: If n starts as an odd number, subtracting 2 \n        # will jump right past 0 into negative numbers (-1, -3, etc.)\n        n -= 2\n        print(f\"Current value: {n}\")\n    \n    print(\"Blast off!\")\n\n# This will run forever because 5 will go: 3, 1, -1, -3...\ncountdown_to_zero(5)\n    REPORT:\n    {'report': '************* Module buggy_code_infiniteloop\\nsandbox\\\\buggy_code_infiniteloop.py:4:58: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code_infiniteloop.py:8:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\buggy_code_infiniteloop.py:12:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\buggy_code_infiniteloop.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\buggy_code_infiniteloop.py:1:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n-----------------------------------\\nYour code has been rated at 2.86/10\\n\\n', 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan addressing both the functional bug and Pylint issues:\n\n*   **Fix Infinite Loop and Incorrect Countdown Logic:**\n    *   Change the loop condition from `while n != 0` to `while n > 0` to ensure the countdown terminates correctly when `n` reaches 0 or becomes negative.\n    *   Change the decrement step from `n -= 2` to `n -= 1` to ensure the countdown consistently reaches 0, regardless of the starting number's parity.\n*   **Add Docstrings:**\n    *   Add a module-level docstring to describe the file's purpose.\n    *   Add a docstring to the `countdown_to_zero` function explaining its functionality, arguments, and behavior.\n*   **Remove Trailing Whitespace:**\n    *   Remove the trailing whitespace on lines 4 and 8.\n*   **Add Final Newline:**\n    *   Ensure the file ends with a newline character."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "04dbf956-1516-465a-afda-db49dba4acce",
-        "timestamp": "2026-01-31T23:48:32.999216",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code_infiniteloop.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\buggy_code_infiniteloop.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan addressing both the functional bug and Pylint issues:\n\n*   **Fix Infinite Loop and Incorrect Countdown Logic:**\n    *   Change the loop condition from `while n != 0` to `while n > 0` to ensure the countdown terminates correctly when `n` reaches 0 or becomes negative.\n    *   Change the decrement step from `n -= 2` to `n -= 1` to ensure the countdown consistently reaches 0, regardless of the starting number's parity.\n*   **Add Docstrings:**\n    *   Add a module-level docstring to describe the file's purpose.\n    *   Add a docstring to the `countdown_to_zero` function explaining its functionality, arguments, and behavior.\n*   **Remove Trailing Whitespace:**\n    *   Remove the trailing whitespace on lines 4 and 8.\n*   **Add Final Newline:**\n    *   Ensure the file ends with a newline character.\n    CODE:\n    def countdown_to_zero(n):\n    print(f\"Starting countdown from {n}...\")\n    while n != 0:\n        # Bug: If n starts as an odd number, subtracting 2 \n        # will jump right past 0 into negative numbers (-1, -3, etc.)\n        n -= 2\n        print(f\"Current value: {n}\")\n    \n    print(\"Blast off!\")\n\n# This will run forever because 5 will go: 3, 1, -1, -3...\ncountdown_to_zero(5)\n    ",
-            "output_response": "\"\"\"A module for a simple countdown function.\"\"\"\n\n\ndef countdown_to_zero(n):\n    \"\"\"Counts down from a given positive integer to zero.\n\n    Prints the starting value, current values during the countdown,\n    and a final \"Blast off!\" message.\n\n    Args:\n        n (int): The positive integer to start the countdown from.\n                 The function expects n to be a non-negative integer.\n    \"\"\"\n    print(f\"Starting countdown from {n}...\")\n    while n > 0:\n        n -= 1\n        print(f\"Current value: {n}\")\n\n    print(\"Blast off!\")\n\n\n# This will now correctly count down from 5 to 0.\ncountdown_to_zero(5)"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "2e058177-8444-41dc-97f0-8f6daf2eafa4",
-        "timestamp": "2026-01-31T23:48:33.007766",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\buggy_code_infiniteloop.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "7f52cc9c-128c-4c94-8a1e-69f4e0416e33",
-        "timestamp": "2026-01-31T23:50:42.494525",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "784c71cf-0ec9-4660-8040-575f78aab2a1",
-        "timestamp": "2026-01-31T23:50:49.348607",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code_infiniteloop.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\buggy_code_infiniteloop.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"A module for a simple countdown function.\"\"\"\n\n\ndef countdown_to_zero(n):\n    \"\"\"Counts down from a given positive integer to zero.\n\n    Prints the starting value, current values during the countdown,\n    and a final \"Blast off!\" message.\n\n    Args:\n        n (int): The positive integer to start the countdown from.\n                 The function expects n to be a non-negative integer.\n    \"\"\"\n    print(f\"Starting countdown from {n}...\")\n    while n > 0:\n        n -= 1\n        print(f\"Current value: {n}\")\n\n    print(\"Blast off!\")\n\n\n# This will now correctly count down from 5 to 0.\ncountdown_to_zero(5)\n    REPORT:\n    {'report': '************* Module buggy_code_infiniteloop\\nsandbox\\\\buggy_code_infiniteloop.py:23:0: C0304: Final newline missing (missing-final-newline)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 8.57/10 (previous run: 2.86/10, +5.71)\\n\\n', 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Address Pylint Warning:** Add a final newline character at the end of the file.\n*   **Improve Robustness:** Add input validation to ensure `n` is a non-negative integer, raising a `ValueError` if the condition is not met."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "460450d7-32fe-4f4a-a8ee-534123890970",
-        "timestamp": "2026-01-31T23:50:52.842948",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code_infiniteloop.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\buggy_code_infiniteloop.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Address Pylint Warning:** Add a final newline character at the end of the file.\n*   **Improve Robustness:** Add input validation to ensure `n` is a non-negative integer, raising a `ValueError` if the condition is not met.\n    CODE:\n    \"\"\"A module for a simple countdown function.\"\"\"\n\n\ndef countdown_to_zero(n):\n    \"\"\"Counts down from a given positive integer to zero.\n\n    Prints the starting value, current values during the countdown,\n    and a final \"Blast off!\" message.\n\n    Args:\n        n (int): The positive integer to start the countdown from.\n                 The function expects n to be a non-negative integer.\n    \"\"\"\n    print(f\"Starting countdown from {n}...\")\n    while n > 0:\n        n -= 1\n        print(f\"Current value: {n}\")\n\n    print(\"Blast off!\")\n\n\n# This will now correctly count down from 5 to 0.\ncountdown_to_zero(5)\n    ",
-            "output_response": "\"\"\"A module for a simple countdown function.\"\"\"\n\n\ndef countdown_to_zero(n):\n    \"\"\"Counts down from a given positive integer to zero.\n\n    Prints the starting value, current values during the countdown,\n    and a final \"Blast off!\" message.\n\n    Args:\n        n (int): The positive integer to start the countdown from.\n                 The function expects n to be a non-negative integer.\n    \"\"\"\n    # Input validation\n    if not isinstance(n, int) or n < 0:\n        raise ValueError(\"Input 'n' must be a non-negative integer.\")\n\n    print(f\"Starting countdown from {n}...\")\n    while n > 0:\n        n -= 1\n        print(f\"Current value: {n}\")\n\n    print(\"Blast off!\")\n\n\n# This will now correctly count down from 5 to 0.\ncountdown_to_zero(5)"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "305f6e14-6d96-443d-9033-39fe6e23a855",
-        "timestamp": "2026-01-31T23:50:52.851960",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\buggy_code_infiniteloop.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "b75d94f8-c751-4348-85ea-e2e6ee4d4567",
-        "timestamp": "2026-01-31T23:51:20.984331",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "83ce0c13-f771-4fc6-80b2-a9a0a5d624c3",
-        "timestamp": "2026-01-31T23:51:24.648138",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code_infiniteloop.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\buggy_code_infiniteloop.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    def calculate_factorial(n):\n    # Bug: Missing the \"base case\" (if n == 1: return 1)\n    # This will keep calling itself with smaller and smaller negative numbers.\n    return n * calculate_factorial(n - 1)\n\nprint(calculate_factorial(5))\n    REPORT:\n    {'report': '************* Module buggy_code_infiniteloop\\nsandbox\\\\buggy_code_infiniteloop.py:6:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\buggy_code_infiniteloop.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\buggy_code_infiniteloop.py:1:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 0.00/10 (previous run: 8.57/10, -8.57)\\n\\n', 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Implement Base Case:** Add the necessary base case(s) to `calculate_factorial` (e.g., `if n <= 1: return 1`) to prevent infinite recursion and correctly handle `n=0` and `n=1`.\n*   **Add Docstrings:**\n    *   Provide a module-level docstring.\n    *   Add a docstring to the `calculate_factorial` function explaining its purpose, parameters, and return value.\n*   **Add Final Newline:** Ensure the file ends with a blank line.\n*   **Add Input Validation (Optional but Recommended):** Consider adding checks within `calculate_factorial` to ensure `n` is a non-negative integer, raising an appropriate error for invalid inputs."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "f3a186a1-f2ab-4ed4-a045-205b6ce2b19b",
-        "timestamp": "2026-01-31T23:51:28.532704",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code_infiniteloop.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\buggy_code_infiniteloop.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Implement Base Case:** Add the necessary base case(s) to `calculate_factorial` (e.g., `if n <= 1: return 1`) to prevent infinite recursion and correctly handle `n=0` and `n=1`.\n*   **Add Docstrings:**\n    *   Provide a module-level docstring.\n    *   Add a docstring to the `calculate_factorial` function explaining its purpose, parameters, and return value.\n*   **Add Final Newline:** Ensure the file ends with a blank line.\n*   **Add Input Validation (Optional but Recommended):** Consider adding checks within `calculate_factorial` to ensure `n` is a non-negative integer, raising an appropriate error for invalid inputs.\n    CODE:\n    def calculate_factorial(n):\n    # Bug: Missing the \"base case\" (if n == 1: return 1)\n    # This will keep calling itself with smaller and smaller negative numbers.\n    return n * calculate_factorial(n - 1)\n\nprint(calculate_factorial(5))\n    ",
-            "output_response": "\"\"\"\nThis module provides a function to calculate the factorial of a non-negative integer.\n\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    For example, 5! = 5 * 4 * 3 * 2 * 1 = 120.\n    By definition, 0! = 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative integer.\n    \"\"\"\n    # Input Validation\n    if not isinstance(n, int):\n        raise TypeError(\"Input must be an integer.\")\n    if n < 0:\n        raise ValueError(\"Input must be a non-negative integer.\")\n\n    # Base Case\n    if n <= 1:\n        return 1\n    # Recursive Step\n    return n * calculate_factorial(n - 1)\n\nprint(calculate_factorial(5))"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "82419dee-e7a9-441f-84b5-10b229b962f8",
-        "timestamp": "2026-01-31T23:51:28.543209",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\buggy_code_infiniteloop.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "89d48818-ca78-4f2c-bc03-32add6e1a6bb",
-        "timestamp": "2026-01-31T23:53:05.201561",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "2c62bf22-42c2-427f-bac1-98ccf5b10004",
-        "timestamp": "2026-01-31T23:54:06.986941",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "9f04d0dc-7421-4163-814a-3d9486783895",
-        "timestamp": "2026-01-31T23:54:11.844098",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\bugcode.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\bugcode.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    # engine.py\n\ndef cool_down(current_temp, target_temp):\n    print(f\"Cooling system... Current: {current_temp}°C\")\n    while current_temp > target_temp:\n        # BUG: The logic here uses 'yield' incorrectly or \n        # forgets to actually update the value returned to the main loop.\n        # It calculates the new temp but doesn't save it.\n        new_temp = current_temp - 0.5 \n        \n        # It should be: current_temp = current_temp - 0.5\n        # But instead, we just log it and stay at the same temp forever.\n        print(f\"System stabilized at: {current_temp}\") \n        \n    return current_temp\n    REPORT:\n    {'report': \"************* Module bugcode\\nsandbox\\\\bugcode.py:6:57: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\bugcode.py:9:37: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\bugcode.py:10:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\bugcode.py:13:54: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\bugcode.py:14:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\bugcode.py:15:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\bugcode.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\bugcode.py:3:0: C0116: Missing function or method docstring (missing-function-docstring)\\nsandbox\\\\bugcode.py:9:8: W0612: Unused variable 'new_temp' (unused-variable)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 0.00/10 (previous run: 0.00/10, +0.00)\\n\\n\", 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix Cooling Logic:** Update `current_temp` within the `while` loop (e.g., `current_temp -= 0.5`) to prevent an infinite loop and correctly simulate cooling. This will also resolve the \"unused variable `new_temp`\" warning.\n*   **Add Docstrings:** Include a module-level docstring and a docstring for the `cool_down` function to explain their purpose.\n*   **Remove Trailing Whitespace:** Eliminate all trailing spaces on lines identified by Pylint.\n*   **Add Final Newline:** Ensure the file ends with a newline character.\n*   **Refine Print Statements:** Adjust the print messages to accurately reflect the system's state (e.g., \"Cooling to...\" during the loop, and \"System stabilized at...\" after the loop)."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "e1bdb822-0b37-4a7a-a81f-3a293fc569ca",
-        "timestamp": "2026-01-31T23:54:17.872769",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\bugcode.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\bugcode.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix Cooling Logic:** Update `current_temp` within the `while` loop (e.g., `current_temp -= 0.5`) to prevent an infinite loop and correctly simulate cooling. This will also resolve the \"unused variable `new_temp`\" warning.\n*   **Add Docstrings:** Include a module-level docstring and a docstring for the `cool_down` function to explain their purpose.\n*   **Remove Trailing Whitespace:** Eliminate all trailing spaces on lines identified by Pylint.\n*   **Add Final Newline:** Ensure the file ends with a newline character.\n*   **Refine Print Statements:** Adjust the print messages to accurately reflect the system's state (e.g., \"Cooling to...\" during the loop, and \"System stabilized at...\" after the loop).\n    CODE:\n    # engine.py\n\ndef cool_down(current_temp, target_temp):\n    print(f\"Cooling system... Current: {current_temp}°C\")\n    while current_temp > target_temp:\n        # BUG: The logic here uses 'yield' incorrectly or \n        # forgets to actually update the value returned to the main loop.\n        # It calculates the new temp but doesn't save it.\n        new_temp = current_temp - 0.5 \n        \n        # It should be: current_temp = current_temp - 0.5\n        # But instead, we just log it and stay at the same temp forever.\n        print(f\"System stabilized at: {current_temp}\") \n        \n    return current_temp\n    ",
-            "output_response": "\"\"\"Simulates an engine cooling system.\"\"\"\n\ndef cool_down(current_temp, target_temp):\n    \"\"\"Simulates the cooling process of a system.\n\n    Args:\n        current_temp (float): The initial temperature of the system.\n        target_temp (float): The desired final temperature.\n\n    Returns:\n        float: The stabilized temperature of the system.\n    \"\"\"\n    print(f\"Cooling system initiated. Current: {current_temp}°C, Target: {target_temp}°C\")\n    while current_temp > target_temp:\n        current_temp -= 0.5\n        print(f\"Cooling to {target_temp}°C... Current temperature: {current_temp:.1f}°C\")\n    print(f\"System stabilized at: {current_temp:.1f}°C\")\n    return current_temp"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "a9e41ad3-56b1-4b37-96e3-64a8c273a48a",
-        "timestamp": "2026-01-31T23:54:17.885782",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\bugcode.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "a35ba25c-5c89-42c0-98f3-816110a4ba52",
-        "timestamp": "2026-01-31T23:55:21.632273",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "354bc4d5-a478-44c1-a373-58939c5cf0bb",
-        "timestamp": "2026-01-31T23:55:24.871380",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\bugcode.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\bugcode.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    # main.py\nfrom engine import cool_down\n\ndef start_nuclear_reactor():\n    print(\"Reactor started!\")\n    # We need to cool the reactor from 100 to 50\n    final_temp = cool_down(100, 50)\n    \n    print(f\"Safe to proceed. Temp is {final_temp}\")\n\nif __name__ == \"__main__\":\n    start_nuclear_reactor()\n    REPORT:\n    {'report': \"************* Module bugcode\\nsandbox\\\\bugcode.py:8:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\bugcode.py:12:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\bugcode.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\bugcode.py:2:0: E0401: Unable to import 'engine' (import-error)\\nsandbox\\\\bugcode.py:4:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 0.00/10 (previous run: 0.00/10, +0.00)\\n\\n\", 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan based on the Pylint report:\n\n*   **Add Docstrings:**\n    *   Add a module-level docstring to `main.py`.\n    *   Add a docstring to the `start_nuclear_reactor` function.\n*   **Resolve Import Error:** Ensure the `engine.py` module is available and correctly placed in the Python path.\n*   **Formatting:**\n    *   Remove any trailing whitespace from lines.\n    *   Add a final newline character at the end of the file."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "9f603c87-4ce6-4781-9c8c-473d9df081cd",
-        "timestamp": "2026-01-31T23:55:30.955918",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\bugcode.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\bugcode.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan based on the Pylint report:\n\n*   **Add Docstrings:**\n    *   Add a module-level docstring to `main.py`.\n    *   Add a docstring to the `start_nuclear_reactor` function.\n*   **Resolve Import Error:** Ensure the `engine.py` module is available and correctly placed in the Python path.\n*   **Formatting:**\n    *   Remove any trailing whitespace from lines.\n    *   Add a final newline character at the end of the file.\n    CODE:\n    # main.py\nfrom engine import cool_down\n\ndef start_nuclear_reactor():\n    print(\"Reactor started!\")\n    # We need to cool the reactor from 100 to 50\n    final_temp = cool_down(100, 50)\n    \n    print(f\"Safe to proceed. Temp is {final_temp}\")\n\nif __name__ == \"__main__\":\n    start_nuclear_reactor()\n    ",
-            "output_response": "\"\"\"Main module for starting and managing the nuclear reactor.\"\"\"\n\nfrom engine import cool_down\n\ndef start_nuclear_reactor():\n    \"\"\"Starts the nuclear reactor and initiates the cooling process.\n\n    It prints a message indicating the reactor has started, then calls\n    the cool_down function from the engine module to reduce the reactor's\n    temperature. Finally, it prints the safe operating temperature.\n    \"\"\"\n    print(\"Reactor started!\")\n    # We need to cool the reactor from 100 to 50\n    final_temp = cool_down(100, 50)\n    \n    print(f\"Safe to proceed. Temp is {final_temp}\")\n\nif __name__ == \"__main__\":\n    start_nuclear_reactor()"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "f132d610-a892-4300-82e6-63de733c3584",
-        "timestamp": "2026-01-31T23:55:30.965467",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\bugcode.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "0789e41d-0f23-4512-b7d8-fa8d263d98c0",
-        "timestamp": "2026-01-31T23:57:45.093359",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "cdae8af1-d27d-4ab8-9394-d6c83994b809",
-        "timestamp": "2026-01-31T23:57:50.777646",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\whileloop.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\whileloop.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    def validate_user(user_id, attempts=0):\n    # We allow 3 attempts to validate\n    if attempts >= 3:\n        return False\n    \n    print(f\"Validating {user_id}... Attempt {attempts}\")\n    # BUG: Instead of incrementing attempts, it passes a calculation \n    # that always results in the same number due to operator precedence.\n    return check_database(user_id, attempts + 1 - 1) \n\ndef check_database(user_id, attempts):\n    # Simulates a DB check that fails and tries to re-validate\n    print(\"Database busy, retrying...\")\n    return validate_user(user_id, attempts)\n\nif __name__ == \"__main__\":\n    validate_user(\"admin_user\")\n    REPORT:\n    {'report': '************* Module whileloop\\nsandbox\\\\whileloop.py:5:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\whileloop.py:7:68: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\whileloop.py:9:52: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\whileloop.py:17:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\whileloop.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\whileloop.py:1:0: C0116: Missing function or method docstring (missing-function-docstring)\\nsandbox\\\\whileloop.py:11:0: C0116: Missing function or method docstring (missing-function-docstring)\\n\\n-----------------------------------\\nYour code has been rated at 3.00/10\\n\\n', 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Functional Fix:** Correctly increment the `attempts` parameter in the recursive call within `validate_user` by changing `attempts + 1 - 1` to `attempts + 1`.\n*   **Documentation:** Add a module-level docstring and docstrings for both the `validate_user` and `check_database` functions.\n*   **Formatting:** Remove trailing whitespace on lines 5, 7, and 9.\n*   **Formatting:** Add a final newline character at the end of the file."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "1328d3cf-03d8-47e8-8707-c95784ccbe1e",
-        "timestamp": "2026-01-31T23:58:04.393067",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\whileloop.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\whileloop.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Functional Fix:** Correctly increment the `attempts` parameter in the recursive call within `validate_user` by changing `attempts + 1 - 1` to `attempts + 1`.\n*   **Documentation:** Add a module-level docstring and docstrings for both the `validate_user` and `check_database` functions.\n*   **Formatting:** Remove trailing whitespace on lines 5, 7, and 9.\n*   **Formatting:** Add a final newline character at the end of the file.\n    CODE:\n    def validate_user(user_id, attempts=0):\n    # We allow 3 attempts to validate\n    if attempts >= 3:\n        return False\n    \n    print(f\"Validating {user_id}... Attempt {attempts}\")\n    # BUG: Instead of incrementing attempts, it passes a calculation \n    # that always results in the same number due to operator precedence.\n    return check_database(user_id, attempts + 1 - 1) \n\ndef check_database(user_id, attempts):\n    # Simulates a DB check that fails and tries to re-validate\n    print(\"Database busy, retrying...\")\n    return validate_user(user_id, attempts)\n\nif __name__ == \"__main__\":\n    validate_user(\"admin_user\")\n    ",
-            "output_response": "\"\"\"\nThis module provides functions for user validation with a retry mechanism.\nIt simulates a database check and allows a limited number of attempts.\n\"\"\"\n\ndef validate_user(user_id, attempts=0):\n    \"\"\"\n    Validates a user ID with a maximum of 3 attempts.\n\n    Args:\n        user_id (str): The ID of the user to validate.\n        attempts (int, optional): The current number of validation attempts.\n                                  Defaults to 0.\n\n    Returns:\n        bool: True if validation is successful (not implemented in this mock),\n              False if the maximum number of attempts is exceeded.\n    \"\"\"\n    # We allow 3 attempts to validate\n    if attempts >= 3:\n        return False\n\n    print(f\"Validating {user_id}... Attempt {attempts}\")\n    # BUG: Instead of incrementing attempts, it passes a calculation\n    # that always results in the same number due to operator precedence.\n    return check_database(user_id, attempts + 1)\n\ndef check_database(user_id, attempts):\n    \"\"\"\n    Simulates a database check for a user ID.\n\n    In this mock, it always \"fails\" and triggers a re-validation attempt\n    via `validate_user`.\n\n    Args:\n        user_id (str): The ID of the user to check.\n        attempts (int): The current number of validation attempts.\n\n    Returns:\n        bool: The result of the subsequent `validate_user` call.\n    \"\"\"\n    # Simulates a DB check that fails and tries to re-validate\n    print(\"Database busy, retrying...\")\n    return validate_user(user_id, attempts)\n\nif __name__ == \"__main__\":\n    validate_user(\"admin_user\")"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "3696eb51-417d-4387-8a89-6b7d0524c968",
-        "timestamp": "2026-01-31T23:58:04.404025",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\whileloop.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "9c512dc9-cb0e-4d8d-a02d-105bdb88c82b",
-        "timestamp": "2026-02-28T09:48:30.072286",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "6fe721de-5f42-4cb9-85dd-52541fe4885c",
-        "timestamp": "2026-02-28T09:48:33.420669",
-        "agent_name": "Auditor",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code.py",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "file": "sandbox\\buggy_code.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result  1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    REPORT:\n    {'report': \"************* Module buggy_code\\nsandbox\\\\buggy_code.py:32:23: E0001: Parsing failed: 'invalid syntax (<unknown>, line 32)' (syntax-error)\\n\", 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Correct the assignment of `factorial_result` from `factorial_result 1` to `factorial_result = 1` on line 32."
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "dd5cd758-daaa-49c1-827c-3d5ca22aa817",
-        "timestamp": "2026-02-28T09:48:36.181941",
-        "agent_name": "Fixer",
-        "model_used": "gemini-2.5-flash",
-        "file_analysed": "sandbox\\buggy_code.py",
-        "action": "FIX",
-        "details": {
-            "file": "sandbox\\buggy_code.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Correct the assignment of `factorial_result` from `factorial_result 1` to `factorial_result = 1` on line 32.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result  1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    ",
-            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "41dbf6e0-4351-4667-9732-2ab31d45efe9",
-        "timestamp": "2026-02-28T09:48:36.198037",
-        "agent_name": "Judge",
-        "model_used": "Tool",
-        "file_analysed": "sandbox\\buggy_code.py",
-        "action": "DEBUG",
-        "details": {
-            "report": {
-                "status": "SKIPPED",
-                "message": "No test file found"
-            },
-            "input_prompt": "Running tests",
-            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
-        },
-        "status": "SUCCESS"
-    },
-    {
-        "id": "4c028f44-3aee-4f04-a84a-11ce24e71e7c",
-        "timestamp": "2026-02-28T09:53:05.092689",
-        "agent_name": "System",
-        "model_used": "Tool_Runner",
-        "file_analysed": "sandbox",
-        "action": "CODE_ANALYSIS",
-        "details": {
-            "Target": "sandbox",
-            "input_prompt": "N/A",
-            "output_response": "N/A"
-        },
-        "status": "INFO"
-    },
-    {
-        "id": "9f473499-d1d5-43df-84c3-0ae5172e95b9",
-        "timestamp": "2026-02-28T09:53:09.112066",
+        "id": "40df9f5c-d73d-4653-9d87-81f6ddb6b543",
+        "timestamp": "2026-02-28T22:26:31.406337",
         "agent_name": "Auditor",
         "model_used": "gemini-2.5-flash",
         "file_analysed": "sandbox\\code.py",
         "action": "CODE_ANALYSIS",
         "details": {
             "file": "sandbox\\code.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result jhbhji\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    REPORT:\n    {'report': \"************* Module code\\nsandbox\\\\code.py:34:26: E0001: Parsing failed: 'invalid syntax (<unknown>, line 34)' (syntax-error)\\n\", 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Correct the syntax error on line 34 within the `calculate_factorial` function. Change `factorial_result jhbhji` to `factorial_result *= i` to correctly perform the factorial calculation."
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n  0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1,  1):\n        factorial_result *= i\n    \n    return factorial_result\n\nif __name__ == \"__main__\":\n    # --- Test Cases ---\n\n    # 1. This works perfectly\n    print(f\"5! is: {calculate_factorial(5)}\")\n\n    # 2. Test for 0! (new base case)\n    print(f\"0! is: {calculate_factorial(0)}\")\n\n    # 3. Test for negative input (will now raise ValueError)\n    print(\"Calculating factorial for -1...\")\n    try:\n        print(calculate_factorial(-1))\n    except ValueError as e:\n        print(f\"Error: {e}\")\n\n    # 4. Test for non-integer input (will now raise TypeError)\n    print(\"Calculating factorial for 3.5...\")\n    try:\n        print(calculate_factorial(3.5))\n    except TypeError as e:\n        print(f\"Error: {e}\")\n    REPORT:\n    {'report': \"************* Module code\\nsandbox\\\\code.py:26:11: E0001: Parsing failed: 'invalid syntax (<unknown>, line 26)' (syntax-error)\\n\", 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Correct the incomplete conditional statement `if n 0:` to `if n < 0:` for proper negative number validation.\n*   **Correct Loop Range:** Adjust the `for` loop range from `range(1, 1)` to `range(1, n + 1)` to correctly calculate the factorial for `n > 0`."
         },
         "status": "SUCCESS"
     },
     {
-        "id": "73f4e88b-8164-43b2-b05d-217275298d60",
-        "timestamp": "2026-02-28T09:53:11.305354",
+        "id": "808a5921-9cb7-4b52-b8c8-59f416c21a18",
+        "timestamp": "2026-02-28T22:26:34.246200",
         "agent_name": "Fixer",
         "model_used": "gemini-2.5-flash",
         "file_analysed": "sandbox\\code.py",
         "action": "FIX",
         "details": {
             "file": "sandbox\\code.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Correct the syntax error on line 34 within the `calculate_factorial` function. Change `factorial_result jhbhji` to `factorial_result *= i` to correctly perform the factorial calculation.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result jhbhji\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    ",
-            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")"
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix Syntax Error:** Correct the incomplete conditional statement `if n 0:` to `if n < 0:` for proper negative number validation.\n*   **Correct Loop Range:** Adjust the `for` loop range from `range(1, 1)` to `range(1, n + 1)` to correctly calculate the factorial for `n > 0`.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n  0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1,  1):\n        factorial_result *= i\n    \n    return factorial_result\n\nif __name__ == \"__main__\":\n    # --- Test Cases ---\n\n    # 1. This works perfectly\n    print(f\"5! is: {calculate_factorial(5)}\")\n\n    # 2. Test for 0! (new base case)\n    print(f\"0! is: {calculate_factorial(0)}\")\n\n    # 3. Test for negative input (will now raise ValueError)\n    print(\"Calculating factorial for -1...\")\n    try:\n        print(calculate_factorial(-1))\n    except ValueError as e:\n        print(f\"Error: {e}\")\n\n    # 4. Test for non-integer input (will now raise TypeError)\n    print(\"Calculating factorial for 3.5...\")\n    try:\n        print(calculate_factorial(3.5))\n    except TypeError as e:\n        print(f\"Error: {e}\")\n    ",
+            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\nif __name__ == \"__main__\":\n    # --- Test Cases ---\n\n    # 1. This works perfectly\n    print(f\"5! is: {calculate_factorial(5)}\")\n\n    # 2. Test for 0! (new base case)\n    print(f\"0! is: {calculate_factorial(0)}\")\n\n    # 3. Test for negative input (will now raise ValueError)\n    print(\"Calculating factorial for -1...\")\n    try:\n        print(calculate_factorial(-1))\n    except ValueError as e:\n        print(f\"Error: {e}\")\n\n    # 4. Test for non-integer input (will now raise TypeError)\n    print(\"Calculating factorial for 3.5...\")\n    try:\n        print(calculate_factorial(3.5))\n    except TypeError as e:\n        print(f\"Error: {e}\")"
         },
         "status": "SUCCESS"
     },
     {
-        "id": "8599ea23-5330-40a9-8202-2083af8d279d",
-        "timestamp": "2026-02-28T09:53:11.315414",
+        "id": "f60893fa-ee3e-4955-b333-eee633726396",
+        "timestamp": "2026-02-28T22:26:34.252867",
         "agent_name": "Judge",
         "model_used": "Tool",
         "file_analysed": "sandbox\\code.py",
@@ -663,8 +59,143 @@
         "status": "SUCCESS"
     },
     {
-        "id": "7c6d1559-3c9e-4671-8b6b-7d6bf0f90edc",
-        "timestamp": "2026-02-28T10:09:33.796400",
+        "id": "5cbe94af-f46b-4eea-9fc2-21bfc2caced5",
+        "timestamp": "2026-02-28T22:26:46.403037",
+        "agent_name": "Auditor",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\test1.py",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\test1.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    bonus = 10\n\ndef appliquer_bonus(score):\n    if score > 100:\n        bonus = 20 # On veut modifier le bonus global\n    return score + bonus\n\nscore_final = appliquer_bonus(150)\nprint(f\"Score avec bonus : {score_final}\") \nprint(f\"Valeur du bonus global : {bonus}\")\n    REPORT:\n    {'report': '************* Module test1\\nsandbox\\\\test1.py:9:42: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\test1.py:10:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\test1.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\test1.py:1:0: C0103: Constant name \"bonus\" doesn\\'t conform to UPPER_CASE naming style (invalid-name)\\nsandbox\\\\test1.py:3:0: C0116: Missing function or method docstring (missing-function-docstring)\\nsandbox\\\\test1.py:5:8: W0621: Redefining name \\'bonus\\' from outer scope (line 1) (redefined-outer-name)\\nsandbox\\\\test1.py:8:0: C0103: Constant name \"score_final\" doesn\\'t conform to UPPER_CASE naming style (invalid-name)\\n\\n-----------------------------------\\nYour code has been rated at 1.25/10\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan based on the provided code and Pylint report:\n\n*   **Add Docstrings:**\n    *   Include a module-level docstring at the top of the file.\n    *   Add a docstring to the `appliquer_bonus` function explaining its purpose.\n*   **Address Global Variable Modification (W0621):**\n    *   Refactor `appliquer_bonus` to accept the current bonus as an argument and return the *calculated bonus* (or the final score) instead of directly modifying a global variable. This improves encapsulation and testability.\n    *   *(Alternative if global modification is strictly required):* Explicitly declare `global bonus` inside `appliquer_bonus` to modify the global variable.\n*   **Improve Variable Naming (C0103):**\n    *   Rename the initial `bonus` to `DEFAULT_BONUS` (if it's a constant initial value) or `initial_bonus` (if it's a mutable starting point) to clarify its role.\n    *   Keep `score_final` lowercase as it's a variable, not a constant.\n*   **Clean Up Formatting (C0303, C0304):**\n    *   Remove trailing whitespace on line 9.\n    *   Add a final newline at the end of the file."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "84453043-a893-4a1f-b4ba-a79dd196be71",
+        "timestamp": "2026-02-28T22:26:59.968580",
+        "agent_name": "Fixer",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\test1.py",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\test1.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan based on the provided code and Pylint report:\n\n*   **Add Docstrings:**\n    *   Include a module-level docstring at the top of the file.\n    *   Add a docstring to the `appliquer_bonus` function explaining its purpose.\n*   **Address Global Variable Modification (W0621):**\n    *   Refactor `appliquer_bonus` to accept the current bonus as an argument and return the *calculated bonus* (or the final score) instead of directly modifying a global variable. This improves encapsulation and testability.\n    *   *(Alternative if global modification is strictly required):* Explicitly declare `global bonus` inside `appliquer_bonus` to modify the global variable.\n*   **Improve Variable Naming (C0103):**\n    *   Rename the initial `bonus` to `DEFAULT_BONUS` (if it's a constant initial value) or `initial_bonus` (if it's a mutable starting point) to clarify its role.\n    *   Keep `score_final` lowercase as it's a variable, not a constant.\n*   **Clean Up Formatting (C0303, C0304):**\n    *   Remove trailing whitespace on line 9.\n    *   Add a final newline at the end of the file.\n    CODE:\n    bonus = 10\n\ndef appliquer_bonus(score):\n    if score > 100:\n        bonus = 20 # On veut modifier le bonus global\n    return score + bonus\n\nscore_final = appliquer_bonus(150)\nprint(f\"Score avec bonus : {score_final}\") \nprint(f\"Valeur du bonus global : {bonus}\")\n    ",
+            "output_response": "\"\"\"Module for calculating scores with a bonus.\"\"\"\n\nDEFAULT_BONUS = 10\n\ndef appliquer_bonus(score, current_bonus_value):\n    \"\"\"Applies a bonus to a given score based on its value.\n\n    Args:\n        score (int): The base score.\n        current_bonus_value (int): The current default bonus value to use if no special condition is met.\n\n    Returns:\n        tuple: A tuple containing the final score and the bonus value that was applied.\n    \"\"\"\n    effective_bonus = current_bonus_value\n    if score > 100:\n        effective_bonus = 20\n    \n    final_score = score + effective_bonus\n    return final_score, effective_bonus\n\n# Initialize the global bonus variable\nbonus = DEFAULT_BONUS\n\n# Call the function, passing the current bonus value and receiving the new score and applied bonus\nscore_final, applied_bonus_value = appliquer_bonus(150, bonus)\n\n# Update the global bonus variable based on the function's logic\nbonus = applied_bonus_value\n\nprint(f\"Score avec bonus : {score_final}\")\nprint(f\"Valeur du bonus global : {bonus}\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "84dc5fdc-dd9f-419a-8c48-8305f13e00fc",
+        "timestamp": "2026-02-28T22:26:59.976253",
+        "agent_name": "Judge",
+        "model_used": "Tool",
+        "file_analysed": "sandbox\\test1.py",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "04f0db62-3bba-4200-908a-3bf2182e4baf",
+        "timestamp": "2026-02-28T22:27:04.374972",
+        "agent_name": "Auditor",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\test2.py",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\test2.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    class GestionnaireUtilisateurs:\n    # L'erreur est ici : la liste est créée une seule fois à la définition du module\n    def __init__(self, noms_initiaux=[]):\n        self.noms = noms_initiaux\n\n    def ajouter_nom(self, nom):\n        self.noms.append(nom)\n\n# Test 1\ng1 = GestionnaireUtilisateurs()\ng1.ajouter_nom(\"Alice\")\n\n# Test 2\ng2 = GestionnaireUtilisateurs()\ng2.ajouter_nom(\"Bob\")\n\nprint(f\"G1: {g1.noms}\") # Attendu: ['Alice']\nprint(f\"G2: {g2.noms}\") # Attendu: ['Bob']\n# Résultat réel : Les deux auront ['Alice', 'Bob'] !\n    REPORT:\n    {'report': '************* Module test2\\nsandbox\\\\test2.py:19:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\test2.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\test2.py:1:0: C0115: Missing class docstring (missing-class-docstring)\\nsandbox\\\\test2.py:3:4: W0102: Dangerous default value [] as argument (dangerous-default-value)\\nsandbox\\\\test2.py:6:4: C0116: Missing function or method docstring (missing-function-docstring)\\nsandbox\\\\test2.py:1:0: R0903: Too few public methods (1/2) (too-few-public-methods)\\n\\n-----------------------------------\\nYour code has been rated at 4.55/10\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix Dangerous Default Argument:** Modify the `__init__` method to use `None` as the default for `noms_initiaux` and initialize an empty list inside the constructor if `None` is provided.\n*   **Add Docstrings:**\n    *   Add a module-level docstring.\n    *   Add a class docstring for `GestionnaireUtilisateurs`.\n    *   Add docstrings for the `__init__` and `ajouter_nom` methods.\n*   **Add Final Newline:** Ensure the file ends with a blank line.\n*   **Consider Expanding Class Functionality:** While not critical for the current bug, consider adding more public methods (e.g., `supprimer_nom`, `get_noms`) if the class's responsibilities are expected to grow, to address the \"too few public methods\" warning."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "0b206957-d24c-4479-96d2-1519f4fa7de8",
+        "timestamp": "2026-02-28T22:27:07.848347",
+        "agent_name": "Fixer",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\test2.py",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\test2.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix Dangerous Default Argument:** Modify the `__init__` method to use `None` as the default for `noms_initiaux` and initialize an empty list inside the constructor if `None` is provided.\n*   **Add Docstrings:**\n    *   Add a module-level docstring.\n    *   Add a class docstring for `GestionnaireUtilisateurs`.\n    *   Add docstrings for the `__init__` and `ajouter_nom` methods.\n*   **Add Final Newline:** Ensure the file ends with a blank line.\n*   **Consider Expanding Class Functionality:** While not critical for the current bug, consider adding more public methods (e.g., `supprimer_nom`, `get_noms`) if the class's responsibilities are expected to grow, to address the \"too few public methods\" warning.\n    CODE:\n    class GestionnaireUtilisateurs:\n    # L'erreur est ici : la liste est créée une seule fois à la définition du module\n    def __init__(self, noms_initiaux=[]):\n        self.noms = noms_initiaux\n\n    def ajouter_nom(self, nom):\n        self.noms.append(nom)\n\n# Test 1\ng1 = GestionnaireUtilisateurs()\ng1.ajouter_nom(\"Alice\")\n\n# Test 2\ng2 = GestionnaireUtilisateurs()\ng2.ajouter_nom(\"Bob\")\n\nprint(f\"G1: {g1.noms}\") # Attendu: ['Alice']\nprint(f\"G2: {g2.noms}\") # Attendu: ['Bob']\n# Résultat réel : Les deux auront ['Alice', 'Bob'] !\n    ",
+            "output_response": "\"\"\"Module pour gérer une collection de noms d'utilisateurs.\"\"\"\n\nclass GestionnaireUtilisateurs:\n    \"\"\"\n    Gère une collection de noms d'utilisateurs.\n\n    Cette classe permet d'initialiser une liste de noms et d'en ajouter de nouveaux.\n    \"\"\"\n    def __init__(self, noms_initiaux=None):\n        \"\"\"\n        Initialise une nouvelle instance du gestionnaire d'utilisateurs.\n\n        Args:\n            noms_initiaux (list, optional): Une liste de noms avec laquelle initialiser\n                                            le gestionnaire. Si None, une liste vide est utilisée.\n        \"\"\"\n        # Correction du problème de l'argument par défaut mutable\n        if noms_initiaux is None:\n            self.noms = []\n        else:\n            self.noms = noms_initiaux\n\n    def ajouter_nom(self, nom):\n        \"\"\"\n        Ajoute un nouveau nom à la liste des utilisateurs.\n\n        Args:\n            nom (str): Le nom de l'utilisateur à ajouter.\n        \"\"\"\n        self.noms.append(nom)\n\n# Test 1\ng1 = GestionnaireUtilisateurs()\ng1.ajouter_nom(\"Alice\")\n\n# Test 2\ng2 = GestionnaireUtilisateurs()\ng2.ajouter_nom(\"Bob\")\n\nprint(f\"G1: {g1.noms}\") # Attendu: ['Alice']\nprint(f\"G2: {g2.noms}\") # Attendu: ['Bob']\n# Résultat réel : Les deux auront ['Alice', 'Bob'] !"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "d00ba12b-aad2-4842-8055-48d2936c2b60",
+        "timestamp": "2026-02-28T22:27:07.856356",
+        "agent_name": "Judge",
+        "model_used": "Tool",
+        "file_analysed": "sandbox\\test2.py",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "788c3f77-8da6-448f-bc93-9ba4410152b4",
+        "timestamp": "2026-02-28T22:27:50.108038",
+        "agent_name": "Auditor",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\time.py",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\time.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Utility module for caching functions with a time-to-live (TTL).\"\"\"\n\nimport time\nfrom functools import wraps\n\ndef smart_cache(ttl, stats=None):\n    \"\"\"\n    A decorator that caches the results of a function call for a specified TTL.\n\n    Args:\n        ttl (int): The time-to-live in seconds for cached results.\n        stats (dict, optional): A dictionary to store call statistics for\n                                decorated functions. Defaults to a new dictionary\n                                if not provided, preventing shared mutable state.\n\n    Returns:\n        function: A decorator that can be applied to a function.\n    \"\"\"\n    if stats is None:\n        stats = {}\n\n    def decorator(func):\n        cache = {}\n\n        @wraps(func)\n        def w\n            if key in cache:\n                value, timestamp = cache[key]\n                if current_time - timestamp < ttl:\n                    return value\n                # If we reach here, the cache entry is stale, so delete it.\n                del cache[key]\n\n            result = func(*args, **\n\n            stats[func.__name__] = stats.get(func.__name__, 0) + 1\n\n            return result\n\n        return wrapper\n    return decorator\n\n\n@smart_cache(ttl=2)\ndef expensive_computation(x, options=None):\n    \"\"\"\n    An example function that simulates an expensive computation with a delay.\n\n    This function pauses for 0.1 seconds to simulate work and returns\n    its input multiplied by 2. If an 'options' dictionary is provided,\n    it sets a \"used\" key to True within it.\n\n    Args:\n        x (int): An integer input.\n        options (dict, optional): An optional dictionary. If provided,\n                                  a \"used\" key will be set to True.\n\n    Returns:\n        int: The input multiplied by 2.\n    \"\"\"\n    if options:\n        options[\"used\"] = True\n    time.sleep(0.1)\n    return x * 2\n\n\n# Test calls\nprint(expensive_computation(10))\nprint(expensive_computation(10))\ntime.sleep(3)\nprint(expensive_computation(10))\n\n# Accessing the stats dictionary from the closure for demonstration\n# This relies on implementation details and might not be robust across Python versions.\nprint(\"Stats:\", expensive_computation.__closure__[0].cell_contents)\n    REPORT:\n    {'report': \"************* Module time\\nsandbox\\\\time.py:26:14: E0001: Parsing failed: 'expected '(' (<unknown>, line 26)' (syntax-error)\\n\", 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan based on the code analysis and Pylint report:\n\n*   **Fix Syntax Errors:**\n    *   Complete the `wrapper` function definition: Change `def w` to `def wrapper(*args, **kwargs):`.\n    *   Correct the incomplete function call: Change `func(*args, **` to `func(*args, **kwargs)`.\n*   **Implement Robust Cache Key Generation:**\n    *   Create a cache key from `*args` and `**kwargs` using a hashable structure, e.g., `key = (args, frozenset(kwargs.items()))`.\n*   **Define Missing Variables:**\n    *   Add `current_time = time.time()` inside the `wrapper` function.\n*   **Improve Statistics Access:**\n    *   Attach the `stats` dictionary (from the `smart_cache` closure) directly to the `wrapper` function as an attribute (e.g., `wrapper.cache_stats = stats`). This provides a robust way to access the shared statistics for the decorator instance, replacing the fragile `__closure__` access.\n*   **Add Type Hinting:**\n    *   Introduce type hints for function arguments and return values in `smart_cache` and `expensive_computation` for better readability and maintainability.\n*   **Enhance Docstrings:**\n    *   Clarify the purpose and behavior of the `stats` argument in `smart_cache`'s docstring, specifically that it's shared across functions decorated by the same `smart_cache` instance and counts actual function executions (cache misses).\n*   **Consider Thread Safety:**\n    *   For a production-grade cache, add a `threading.Lock` to protect the `cache` dictionary and the `stats` dictionary from race conditions in a multi-threaded environment."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "42ef7b8a-13f9-40a4-8bfa-c7b56e3b3ec8",
+        "timestamp": "2026-02-28T22:27:57.036215",
+        "agent_name": "Fixer",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\time.py",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\time.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan based on the code analysis and Pylint report:\n\n*   **Fix Syntax Errors:**\n    *   Complete the `wrapper` function definition: Change `def w` to `def wrapper(*args, **kwargs):`.\n    *   Correct the incomplete function call: Change `func(*args, **` to `func(*args, **kwargs)`.\n*   **Implement Robust Cache Key Generation:**\n    *   Create a cache key from `*args` and `**kwargs` using a hashable structure, e.g., `key = (args, frozenset(kwargs.items()))`.\n*   **Define Missing Variables:**\n    *   Add `current_time = time.time()` inside the `wrapper` function.\n*   **Improve Statistics Access:**\n    *   Attach the `stats` dictionary (from the `smart_cache` closure) directly to the `wrapper` function as an attribute (e.g., `wrapper.cache_stats = stats`). This provides a robust way to access the shared statistics for the decorator instance, replacing the fragile `__closure__` access.\n*   **Add Type Hinting:**\n    *   Introduce type hints for function arguments and return values in `smart_cache` and `expensive_computation` for better readability and maintainability.\n*   **Enhance Docstrings:**\n    *   Clarify the purpose and behavior of the `stats` argument in `smart_cache`'s docstring, specifically that it's shared across functions decorated by the same `smart_cache` instance and counts actual function executions (cache misses).\n*   **Consider Thread Safety:**\n    *   For a production-grade cache, add a `threading.Lock` to protect the `cache` dictionary and the `stats` dictionary from race conditions in a multi-threaded environment.\n    CODE:\n    \"\"\"Utility module for caching functions with a time-to-live (TTL).\"\"\"\n\nimport time\nfrom functools import wraps\n\ndef smart_cache(ttl, stats=None):\n    \"\"\"\n    A decorator that caches the results of a function call for a specified TTL.\n\n    Args:\n        ttl (int): The time-to-live in seconds for cached results.\n        stats (dict, optional): A dictionary to store call statistics for\n                                decorated functions. Defaults to a new dictionary\n                                if not provided, preventing shared mutable state.\n\n    Returns:\n        function: A decorator that can be applied to a function.\n    \"\"\"\n    if stats is None:\n        stats = {}\n\n    def decorator(func):\n        cache = {}\n\n        @wraps(func)\n        def w\n            if key in cache:\n                value, timestamp = cache[key]\n                if current_time - timestamp < ttl:\n                    return value\n                # If we reach here, the cache entry is stale, so delete it.\n                del cache[key]\n\n            result = func(*args, **\n\n            stats[func.__name__] = stats.get(func.__name__, 0) + 1\n\n            return result\n\n        return wrapper\n    return decorator\n\n\n@smart_cache(ttl=2)\ndef expensive_computation(x, options=None):\n    \"\"\"\n    An example function that simulates an expensive computation with a delay.\n\n    This function pauses for 0.1 seconds to simulate work and returns\n    its input multiplied by 2. If an 'options' dictionary is provided,\n    it sets a \"used\" key to True within it.\n\n    Args:\n        x (int): An integer input.\n        options (dict, optional): An optional dictionary. If provided,\n                                  a \"used\" key will be set to True.\n\n    Returns:\n        int: The input multiplied by 2.\n    \"\"\"\n    if options:\n        options[\"used\"] = True\n    time.sleep(0.1)\n    return x * 2\n\n\n# Test calls\nprint(expensive_computation(10))\nprint(expensive_computation(10))\ntime.sleep(3)\nprint(expensive_computation(10))\n\n# Accessing the stats dictionary from the closure for demonstration\n# This relies on implementation details and might not be robust across Python versions.\nprint(\"Stats:\", expensive_computation.__closure__[0].cell_contents)\n    ",
+            "output_response": "import time\nimport threading\nfrom functools import wraps\nfrom typing import Callable, Any, Dict, Optional, Tuple, FrozenSet\n\ndef smart_cache(ttl: int, stats: Optional[Dict[str, int]] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:\n    \"\"\"\n    A decorator that caches the results of a function call for a specified TTL.\n\n    Args:\n        ttl (int): The time-to-live in seconds for cached results.\n        stats (dict, optional): A dictionary to store call statistics for\n                                decorated functions. This dictionary is shared\n                                across all functions decorated by the same\n                                `smart_cache` instance and counts actual\n                                function executions (cache misses).\n                                Defaults to a new dictionary if not provided.\n\n    Returns:\n        function: A decorator that can be applied to a function.\n    \"\"\"\n    if stats is None:\n        stats = {}\n\n    # Locks for thread safety\n    cache_lock = threading.Lock()\n    stats_lock = threading.Lock()\n\n    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:\n        cache: Dict[Tuple[Any, FrozenSet[Tuple[str, Any]]], Tuple[Any, float]] = {}\n\n        @wraps(func)\n        def wrapper(*args: Any, **kwargs: Any) -> Any:\n            current_time = time.time()\n            key = (args, frozenset(kwargs.items()))\n\n            with cache_lock:\n                if key in cache:\n                    value, timestamp = cache[key]\n                    if current_time - timestamp < ttl:\n                        return value\n                    # If we reach here, the cache entry is stale, so delete it.\n                    del cache[key]\n\n            # If not in cache or stale, execute the function\n            result = func(*args, **kwargs)\n\n            # Update cache and stats\n            with cache_lock:\n                cache[key] = (result, current_time)\n\n            with stats_lock:\n                stats[func.__name__] = stats.get(func.__name__, 0) + 1\n\n            return result\n\n        # Attach the shared stats dictionary to the wrapper for easy access\n        wrapper.cache_stats = stats # type: ignore[attr-defined]\n        return wrapper\n    return decorator\n\n\n@smart_cache(ttl=2)\ndef expensive_computation(x: int, options: Optional[Dict[str, bool]] = None) -> int:\n    \"\"\"\n    An example function that simulates an expensive computation with a delay.\n\n    This function pauses for 0.1 seconds to simulate work and returns\n    its input multiplied by 2. If an 'options' dictionary is provided,\n    it sets a \"used\" key to True within it.\n\n    Args:\n        x (int): An integer input.\n        options (dict, optional): An optional dictionary. If provided,\n                                  a \"used\" key will be set to True.\n\n    Returns:\n        int: The input multiplied by 2.\n    \"\"\"\n    if options:\n        options[\"used\"] = True\n    time.sleep(0.1)\n    return x * 2\n\n\n# Test calls\nprint(f\"First call (miss): {expensive_computation(10)}\")\nprint(f\"Second call (hit): {expensive_computation(10)}\")\nprint(\"Waiting 3 seconds for TTL to expire...\")\ntime.sleep(3)\nprint(f\"Third call (miss after TTL): {expensive_computation(10)}\")\nprint(f\"Fourth call (hit): {expensive_computation(10, options={'test': False})}\") # Different kwargs, so a miss\nprint(f\"Fifth call (hit): {expensive_computation(10, options={'test': False})}\")\n\n# Accessing the stats dictionary via the attached attribute\nprint(\"Stats:\", expensive_computation.cache_stats) # type: ignore[attr-defined]"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "fe68d3eb-2de2-4a51-8cdb-e3efd43b8829",
+        "timestamp": "2026-02-28T22:27:57.043264",
+        "agent_name": "Judge",
+        "model_used": "Tool",
+        "file_analysed": "sandbox\\time.py",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "e2e42436-4c55-4fa6-a9cd-3cbf1d14ea92",
+        "timestamp": "2026-02-28T22:28:27.558053",
         "agent_name": "System",
         "model_used": "Tool_Runner",
         "file_analysed": "sandbox",
@@ -677,36 +208,36 @@
         "status": "INFO"
     },
     {
-        "id": "964f31dd-eafe-428e-9c09-07bc918c7502",
-        "timestamp": "2026-02-28T10:09:36.447314",
+        "id": "4e056bf4-0eb9-46ac-a382-8040adc93ce2",
+        "timestamp": "2026-02-28T22:28:31.468859",
         "agent_name": "Auditor",
         "model_used": "gemini-2.5-flash",
         "file_analysed": "sandbox\\code.py",
         "action": "CODE_ANALYSIS",
         "details": {
             "file": "sandbox\\code.py",
-            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    REPORT:\n    {'report': '************* Module code\\nsandbox\\\\code.py:24:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\code.py:28:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\code.py:35:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\code.py:58:0: C0304: Final newline missing (missing-final-newline)\\n\\n-----------------------------------\\nYour code has been rated at 8.10/10\\n\\n', 'status': 'SUCCESS'}\n    ",
-            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix Factorial Calculation Logic:** Correct the `for` loop in `calculate_factorial` to iterate up to and including `n` (e.g., `range(1, n + 1)`).\n*   **Remove Trailing Whitespace:** Eliminate trailing whitespace on lines 24, 28, and 35.\n*   **Add Final Newline:** Ensure the file ends with a newline character."
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\nif __name__ == \"__main__\":\n    # --- Test Cases ---\n\n    # 1. This works perfectly\n    print(f\"5! is: {calculate_factorial(5)}\")\n\n    # 2. Test for 0! (new base case)\n    print(f\"0! is: {calculate_factorial(0)}\")\n\n    # 3. Test for negative input (will now raise ValueError)\n    print(\"Calculating factorial for -1...\")\n    try:\n        print(calculate_factorial(-1))\n    except ValueError as e:\n        print(f\"Error: {e}\")\n\n    # 4. Test for non-integer input (will now raise TypeError)\n    print(\"Calculating factorial for 3.5...\")\n    try:\n        print(calculate_factorial(3.5))\n    except TypeError as e:\n        print(f\"Error: {e}\")\n    REPORT:\n    {'report': '************* Module code\\nsandbox\\\\code.py:24:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\code.py:28:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\code.py:35:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\code.py:59:0: C0304: Final newline missing (missing-final-newline)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 8.18/10 (previous run: 8.10/10, +0.09)\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   Remove trailing whitespace on lines 24, 28, and 35.\n*   Add a final newline character at the end of the file."
         },
         "status": "SUCCESS"
     },
     {
-        "id": "618a9015-02df-411a-b1b3-be846dafde8a",
-        "timestamp": "2026-02-28T10:09:44.336528",
+        "id": "c51339c6-88dc-47b1-a34d-99aaa6a7ade5",
+        "timestamp": "2026-02-28T22:28:37.247423",
         "agent_name": "Fixer",
         "model_used": "gemini-2.5-flash",
         "file_analysed": "sandbox\\code.py",
         "action": "FIX",
         "details": {
             "file": "sandbox\\code.py",
-            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix Factorial Calculation Logic:** Correct the `for` loop in `calculate_factorial` to iterate up to and including `n` (e.g., `range(1, n + 1)`).\n*   **Remove Trailing Whitespace:** Eliminate trailing whitespace on lines 24, 28, and 35.\n*   **Add Final Newline:** Ensure the file ends with a newline character.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    ",
-            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")"
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   Remove trailing whitespace on lines 24, 28, and 35.\n*   Add a final newline character at the end of the file.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\nif __name__ == \"__main__\":\n    # --- Test Cases ---\n\n    # 1. This works perfectly\n    print(f\"5! is: {calculate_factorial(5)}\")\n\n    # 2. Test for 0! (new base case)\n    print(f\"0! is: {calculate_factorial(0)}\")\n\n    # 3. Test for negative input (will now raise ValueError)\n    print(\"Calculating factorial for -1...\")\n    try:\n        print(calculate_factorial(-1))\n    except ValueError as e:\n        print(f\"Error: {e}\")\n\n    # 4. Test for non-integer input (will now raise TypeError)\n    print(\"Calculating factorial for 3.5...\")\n    try:\n        print(calculate_factorial(3.5))\n    except TypeError as e:\n        print(f\"Error: {e}\")\n    ",
+            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\nif __name__ == \"__main__\":\n    # --- Test Cases ---\n\n    # 1. This works perfectly\n    print(f\"5! is: {calculate_factorial(5)}\")\n\n    # 2. Test for 0! (new base case)\n    print(f\"0! is: {calculate_factorial(0)}\")\n\n    # 3. Test for negative input (will now raise ValueError)\n    print(\"Calculating factorial for -1...\")\n    try:\n        print(calculate_factorial(-1))\n    except ValueError as e:\n        print(f\"Error: {e}\")\n\n    # 4. Test for non-integer input (will now raise TypeError)\n    print(\"Calculating factorial for 3.5...\")\n    try:\n        print(calculate_factorial(3.5))\n    except TypeError as e:\n        print(f\"Error: {e}\")"
         },
         "status": "SUCCESS"
     },
     {
-        "id": "e9b9e0be-4e0e-4872-9101-a56f28cd005b",
-        "timestamp": "2026-02-28T10:09:44.346056",
+        "id": "a730cf86-c9b3-425d-a3cb-eb3eb3fcf734",
+        "timestamp": "2026-02-28T22:28:37.258809",
         "agent_name": "Judge",
         "model_used": "Tool",
         "file_analysed": "sandbox\\code.py",
@@ -718,6 +249,110 @@
             },
             "input_prompt": "Running tests",
             "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "b517b72b-8f19-4931-9ae7-781c128bb390",
+        "timestamp": "2026-02-28T22:28:45.419317",
+        "agent_name": "Auditor",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\test1.py",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\test1.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating scores with a bonus.\"\"\"\n\nDEFAULT_BONUS = 10\n\ndef appliquer_bonus(score, current_bonus_value):\n    \"\"\"Applies a bonus to a given score based on its value.\n\n    Args:\n        score (int): The base score.\n        current_bonus_value (int): The current default bonus value to use if no special condition is met.\n\n    Returns:\n        tuple: A tuple containing the final score and the bonus value that was applied.\n    \"\"\"\n    effective_bonus = current_bonus_value\n    if score > 100:\n        effective_bonus = 20\n    \n    final_score = score + effective_bonus\n    return final_score, effective_bonus\n\n# Initialize the global bonus variable\nbonus = DEFAULT_BONUS\n\n# Call the function, passing the current bonus value and receiving the new score and applied bonus\nscore_final, applied_bonus_value = appliquer_bonus(150, bonus)\n\n# Update the global bonus variable based on the function's logic\nbonus = applied_bonus_value\n\nprint(f\"Score avec bonus : {score_final}\")\nprint(f\"Valeur du bonus global : {bonus}\")\n    REPORT:\n    {'report': '************* Module test1\\nsandbox\\\\test1.py:10:0: C0301: Line too long (105/100) (line-too-long)\\nsandbox\\\\test1.py:18:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\test1.py:32:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\test1.py:23:0: C0103: Constant name \"bonus\" doesn\\'t conform to UPPER_CASE naming style (invalid-name)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 6.67/10 (previous run: 1.25/10, +5.42)\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan based on the provided code and Pylint report:\n\n*   **Pylint Fixes:**\n    *   Reformat the docstring for `appliquer_bonus` to ensure no line exceeds 100 characters.\n    *   Remove the trailing whitespace on line 18.\n    *   Add a final newline at the end of the file.\n*   **Global State & Naming:**\n    *   Eliminate the mutable global `bonus` variable. Initialize `bonus` as a local variable within the main execution block to avoid Pylint's `invalid-name` warning and improve state management.\n    *   Rename the function `appliquer_bonus` to `apply_bonus` for English consistency.\n    *   Rename the parameter `current_bonus_value` to `default_bonus_value` for better clarity.\n*   **Code Structure:**\n    *   Encapsulate the main script execution logic within an `if __name__ == \"__main__\":` block."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "ddf3411a-b840-4633-b4cc-9821a81e62f3",
+        "timestamp": "2026-02-28T22:28:53.670222",
+        "agent_name": "Fixer",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\test1.py",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\test1.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan based on the provided code and Pylint report:\n\n*   **Pylint Fixes:**\n    *   Reformat the docstring for `appliquer_bonus` to ensure no line exceeds 100 characters.\n    *   Remove the trailing whitespace on line 18.\n    *   Add a final newline at the end of the file.\n*   **Global State & Naming:**\n    *   Eliminate the mutable global `bonus` variable. Initialize `bonus` as a local variable within the main execution block to avoid Pylint's `invalid-name` warning and improve state management.\n    *   Rename the function `appliquer_bonus` to `apply_bonus` for English consistency.\n    *   Rename the parameter `current_bonus_value` to `default_bonus_value` for better clarity.\n*   **Code Structure:**\n    *   Encapsulate the main script execution logic within an `if __name__ == \"__main__\":` block.\n    CODE:\n    \"\"\"Module for calculating scores with a bonus.\"\"\"\n\nDEFAULT_BONUS = 10\n\ndef appliquer_bonus(score, current_bonus_value):\n    \"\"\"Applies a bonus to a given score based on its value.\n\n    Args:\n        score (int): The base score.\n        current_bonus_value (int): The current default bonus value to use if no special condition is met.\n\n    Returns:\n        tuple: A tuple containing the final score and the bonus value that was applied.\n    \"\"\"\n    effective_bonus = current_bonus_value\n    if score > 100:\n        effective_bonus = 20\n    \n    final_score = score + effective_bonus\n    return final_score, effective_bonus\n\n# Initialize the global bonus variable\nbonus = DEFAULT_BONUS\n\n# Call the function, passing the current bonus value and receiving the new score and applied bonus\nscore_final, applied_bonus_value = appliquer_bonus(150, bonus)\n\n# Update the global bonus variable based on the function's logic\nbonus = applied_bonus_value\n\nprint(f\"Score avec bonus : {score_final}\")\nprint(f\"Valeur du bonus global : {bonus}\")\n    ",
+            "output_response": "\"\"\"Module for calculating scores with a bonus.\"\"\"\n\nDEFAULT_BONUS = 10\n\ndef apply_bonus(score, default_bonus_value):\n    \"\"\"Applies a bonus to a given score based on its value.\n\n    Args:\n        score (int): The base score.\n        default_bonus_value (int): The default bonus value to use if no special\n                                   condition is met.\n\n    Returns:\n        tuple: A tuple containing the final score and the bonus value that was applied.\n    \"\"\"\n    effective_bonus = default_bonus_value\n    if score > 100:\n        effective_bonus = 20\n    \n    final_score = score + effective_bonus\n    return final_score, effective_bonus\n\nif __name__ == \"__main__\":\n    # Initialize the bonus variable locally\n    bonus = DEFAULT_BONUS\n\n    # Call the function, passing the current bonus value and receiving the new score and applied bonus\n    score_final, applied_bonus_value = apply_bonus(150, bonus)\n\n    # Update the local bonus variable based on the function's logic\n    bonus = applied_bonus_value\n\n    print(f\"Score avec bonus : {score_final}\")\n    print(f\"Valeur du bonus global : {bonus}\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "eb166995-3555-4308-ba1b-ecf0ab585176",
+        "timestamp": "2026-02-28T22:28:53.679178",
+        "agent_name": "Judge",
+        "model_used": "Tool",
+        "file_analysed": "sandbox\\test1.py",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "ebac43d7-ddcb-4b26-9b35-271dcf63abd7",
+        "timestamp": "2026-02-28T22:28:58.298038",
+        "agent_name": "Auditor",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\test2.py",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\test2.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module pour gérer une collection de noms d'utilisateurs.\"\"\"\n\nclass GestionnaireUtilisateurs:\n    \"\"\"\n    Gère une collection de noms d'utilisateurs.\n\n    Cette classe permet d'initialiser une liste de noms et d'en ajouter de nouveaux.\n    \"\"\"\n    def __init__(self, noms_initiaux=None):\n        \"\"\"\n        Initialise une nouvelle instance du gestionnaire d'utilisateurs.\n\n        Args:\n            noms_initiaux (list, optional): Une liste de noms avec laquelle initialiser\n                                            le gestionnaire. Si None, une liste vide est utilisée.\n        \"\"\"\n        # Correction du problème de l'argument par défaut mutable\n        if noms_initiaux is None:\n            self.noms = []\n        else:\n            self.noms = noms_initiaux\n\n    def ajouter_nom(self, nom):\n        \"\"\"\n        Ajoute un nouveau nom à la liste des utilisateurs.\n\n        Args:\n            nom (str): Le nom de l'utilisateur à ajouter.\n        \"\"\"\n        self.noms.append(nom)\n\n# Test 1\ng1 = GestionnaireUtilisateurs()\ng1.ajouter_nom(\"Alice\")\n\n# Test 2\ng2 = GestionnaireUtilisateurs()\ng2.ajouter_nom(\"Bob\")\n\nprint(f\"G1: {g1.noms}\") # Attendu: ['Alice']\nprint(f\"G2: {g2.noms}\") # Attendu: ['Bob']\n# Résultat réel : Les deux auront ['Alice', 'Bob'] !\n    REPORT:\n    {'report': '************* Module test2\\nsandbox\\\\test2.py:42:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\test2.py:3:0: R0903: Too few public methods (1/2) (too-few-public-methods)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 8.46/10 (previous run: 4.55/10, +3.92)\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Add a final newline** to the file to resolve the `missing-final-newline` warning.\n*   **Remove or update the misleading comment** `Résultat réel : Les deux auront ['Alice', 'Bob'] !` as the mutable default argument bug has already been correctly addressed in the `__init__` method.\n*   **Enhance the `GestionnaireUtilisateurs` class** by adding at least one more public method (e.g., `lister_noms` to return the current list of names, or `contient_nom` to check if a name exists) to improve its utility and address the `too-few-public-methods` warning."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "3c53baac-eeeb-46e2-bed0-5fd824a90a28",
+        "timestamp": "2026-02-28T22:29:01.842969",
+        "agent_name": "Fixer",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\test2.py",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\test2.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Add a final newline** to the file to resolve the `missing-final-newline` warning.\n*   **Remove or update the misleading comment** `Résultat réel : Les deux auront ['Alice', 'Bob'] !` as the mutable default argument bug has already been correctly addressed in the `__init__` method.\n*   **Enhance the `GestionnaireUtilisateurs` class** by adding at least one more public method (e.g., `lister_noms` to return the current list of names, or `contient_nom` to check if a name exists) to improve its utility and address the `too-few-public-methods` warning.\n    CODE:\n    \"\"\"Module pour gérer une collection de noms d'utilisateurs.\"\"\"\n\nclass GestionnaireUtilisateurs:\n    \"\"\"\n    Gère une collection de noms d'utilisateurs.\n\n    Cette classe permet d'initialiser une liste de noms et d'en ajouter de nouveaux.\n    \"\"\"\n    def __init__(self, noms_initiaux=None):\n        \"\"\"\n        Initialise une nouvelle instance du gestionnaire d'utilisateurs.\n\n        Args:\n            noms_initiaux (list, optional): Une liste de noms avec laquelle initialiser\n                                            le gestionnaire. Si None, une liste vide est utilisée.\n        \"\"\"\n        # Correction du problème de l'argument par défaut mutable\n        if noms_initiaux is None:\n            self.noms = []\n        else:\n            self.noms = noms_initiaux\n\n    def ajouter_nom(self, nom):\n        \"\"\"\n        Ajoute un nouveau nom à la liste des utilisateurs.\n\n        Args:\n            nom (str): Le nom de l'utilisateur à ajouter.\n        \"\"\"\n        self.noms.append(nom)\n\n# Test 1\ng1 = GestionnaireUtilisateurs()\ng1.ajouter_nom(\"Alice\")\n\n# Test 2\ng2 = GestionnaireUtilisateurs()\ng2.ajouter_nom(\"Bob\")\n\nprint(f\"G1: {g1.noms}\") # Attendu: ['Alice']\nprint(f\"G2: {g2.noms}\") # Attendu: ['Bob']\n# Résultat réel : Les deux auront ['Alice', 'Bob'] !\n    ",
+            "output_response": "\"\"\"Module pour gérer une collection de noms d'utilisateurs.\"\"\"\n\nclass GestionnaireUtilisateurs:\n    \"\"\"\n    Gère une collection de noms d'utilisateurs.\n\n    Cette classe permet d'initialiser une liste de noms et d'en ajouter de nouveaux.\n    \"\"\"\n    def __init__(self, noms_initiaux=None):\n        \"\"\"\n        Initialise une nouvelle instance du gestionnaire d'utilisateurs.\n\n        Args:\n            noms_initiaux (list, optional): Une liste de noms avec laquelle initialiser\n                                            le gestionnaire. Si None, une liste vide est utilisée.\n        \"\"\"\n        # Correction du problème de l'argument par défaut mutable\n        if noms_initiaux is None:\n            self.noms = []\n        else:\n            # Créer une copie pour éviter les références partagées inattendues\n            self.noms = list(noms_initiaux)\n\n    def ajouter_nom(self, nom):\n        \"\"\"\n        Ajoute un nouveau nom à la liste des utilisateurs.\n\n        Args:\n            nom (str): Le nom de l'utilisateur à ajouter.\n        \"\"\"\n        self.noms.append(nom)\n\n    def lister_noms(self):\n        \"\"\"\n        Retourne une copie de la liste actuelle des noms d'utilisateurs.\n\n        Returns:\n            list: Une liste des noms d'utilisateurs.\n        \"\"\"\n        return list(self.noms)\n\n# Test 1\ng1 = GestionnaireUtilisateurs()\ng1.ajouter_nom(\"Alice\")\n\n# Test 2\ng2 = GestionnaireUtilisateurs()\ng2.ajouter_nom(\"Bob\")\n\nprint(f\"G1: {g1.lister_noms()}\") # Attendu: ['Alice']\nprint(f\"G2: {g2.lister_noms()}\") # Attendu: ['Bob']\n\n# Test de la nouvelle méthode\ng3 = GestionnaireUtilisateurs([\"Charlie\", \"David\"])\nprint(f\"G3: {g3.lister_noms()}\")\ng3.ajouter_nom(\"Eve\")\nprint(f\"G3 après ajout: {g3.lister_noms()}\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "9c3be576-c644-4bd7-afb4-b60c5c0a9419",
+        "timestamp": "2026-02-28T22:29:01.853137",
+        "agent_name": "Judge",
+        "model_used": "Tool",
+        "file_analysed": "sandbox\\test2.py",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "6751f7e1-57f5-4e34-8d0c-08fe6b118ef7",
+        "timestamp": "2026-02-28T22:29:39.076690",
+        "agent_name": "Auditor",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\time.py",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\time.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    import time\nimport threading\nfrom functools import wraps\nfrom typing import Callable, Any, Dict, Optional, Tuple, FrozenSet\n\ndef smart_cache(ttl: int, stats: Optional[Dict[str, int]] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:\n    \"\"\"\n    A decorator that caches the results of a function call for a specified TTL.\n\n    Args:\n        ttl (int): The time-to-live in seconds for cached results.\n        stats (dict, optional): A dictionary to store call statistics for\n                                decorated functions. This dictionary is shared\n                                across all functions decorated by the same\n                                `smart_cache` instance and counts actual\n                                function executions (cache misses).\n                                Defaults to a new dictionary if not provided.\n\n    Returns:\n        function: A decorator that can be applied to a function.\n    \"\"\"\n    if stats is None:\n        stats = {}\n\n    # Locks for thread safety\n    cache_lock = threading.Lock()\n    stats_lock = threading.Lock()\n\n    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:\n        cache: Dict[Tuple[Any, FrozenSet[Tuple[str, Any]]], Tuple[Any, float]] = {}\n\n        @wraps(func)\n        def wrapper(*args: Any, **kwargs: Any) -> Any:\n            current_time = time.time()\n            key = (args, frozenset(kwargs.items()))\n\n            with cache_lock:\n                if key in cache:\n                    value, timestamp = cache[key]\n                    if current_time - timestamp < ttl:\n                        return value\n                    # If we reach here, the cache entry is stale, so delete it.\n                    del cache[key]\n\n            # If not in cache or stale, execute the function\n            result = func(*args, **kwargs)\n\n            # Update cache and stats\n            with cache_lock:\n                cache[key] = (result, current_time)\n\n            with stats_lock:\n                stats[func.__name__] = stats.get(func.__name__, 0) + 1\n\n            return result\n\n        # Attach the shared stats dictionary to the wrapper for easy access\n        wrapper.cache_stats = stats # type: ignore[attr-defined]\n        return wrapper\n    return decorator\n\n\n@smart_cache(ttl=2)\ndef expensive_computation(x: int, options: Optional[Dict[str, bool]] = None) -> int:\n    \"\"\"\n    An example function that simulates an expensive computation with a delay.\n\n    This function pauses for 0.1 seconds to simulate work and returns\n    its input multiplied by 2. If an 'options' dictionary is provided,\n    it sets a \"used\" key to True within it.\n\n    Args:\n        x (int): An integer input.\n        options (dict, optional): An optional dictionary. If provided,\n                                  a \"used\" key will be set to True.\n\n    Returns:\n        int: The input multiplied by 2.\n    \"\"\"\n    if options:\n        options[\"used\"] = True\n    time.sleep(0.1)\n    return x * 2\n\n\n# Test calls\nprint(f\"First call (miss): {expensive_computation(10)}\")\nprint(f\"Second call (hit): {expensive_computation(10)}\")\nprint(\"Waiting 3 seconds for TTL to expire...\")\ntime.sleep(3)\nprint(f\"Third call (miss after TTL): {expensive_computation(10)}\")\nprint(f\"Fourth call (hit): {expensive_computation(10, options={'test': False})}\") # Different kwargs, so a miss\nprint(f\"Fifth call (hit): {expensive_computation(10, options={'test': False})}\")\n\n# Accessing the stats dictionary via the attached attribute\nprint(\"Stats:\", expensive_computation.cache_stats) # type: ignore[attr-defined]\n    REPORT:\n    {'report': \"************* Module time\\nsandbox\\\\time.py:6:0: C0301: Line too long (120/100) (line-too-long)\\nsandbox\\\\time.py:92:0: C0301: Line too long (111/100) (line-too-long)\\nsandbox\\\\time.py:96:0: C0304: Final newline missing (missing-final-newline)\\nsandbox\\\\time.py:1:0: C0114: Missing module docstring (missing-module-docstring)\\nsandbox\\\\time.py:1:0: W0406: Module import itself (import-self)\\nsandbox\\\\time.py:34:27: E1102: time.time is not callable (not-callable)\\nsandbox\\\\time.py:82:4: E1101: Module 'time' has no 'sleep' member (no-member)\\nsandbox\\\\time.py:90:0: E1101: Module 'time' has no 'sleep' member (no-member)\\n\\n------------------------------------------------------------------\\nYour code has been rated at 5.24/10 (previous run: 2.41/10, +2.82)\\n\\n\", 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Rename the file:** Change `time.py` to a more descriptive name (e.g., `smart_cache_decorator.py`) to avoid conflict with the standard `time` module. This will resolve the `import-self`, `not-callable`, and `no-member` errors.\n*   **Add a module docstring:** Include a docstring at the top of the file to describe its purpose.\n*   **Address line length:** Break long lines (e.g., `smart_cache` signature, `print` statements) to adhere to the 100-character limit.\n*   **Add a final newline:** Ensure the file ends with a blank line."
         },
         "status": "SUCCESS"
     }
