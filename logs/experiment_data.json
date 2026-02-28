@@ -661,5 +661,64 @@
             "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
         },
         "status": "SUCCESS"
+    },
+    {
+        "id": "7c6d1559-3c9e-4671-8b6b-7d6bf0f90edc",
+        "timestamp": "2026-02-28T10:09:33.796400",
+        "agent_name": "System",
+        "model_used": "Tool_Runner",
+        "file_analysed": "sandbox",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "Target": "sandbox",
+            "input_prompt": "N/A",
+            "output_response": "N/A"
+        },
+        "status": "INFO"
+    },
+    {
+        "id": "964f31dd-eafe-428e-9c09-07bc918c7502",
+        "timestamp": "2026-02-28T10:09:36.447314",
+        "agent_name": "Auditor",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\code.py",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "file": "sandbox\\code.py",
+            "input_prompt": "\n    Analyze this code and pylint report. \n    Return a concise refactoring plan as a bulleted list.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    REPORT:\n    {'report': '************* Module code\\nsandbox\\\\code.py:24:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\code.py:28:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\code.py:35:0: C0303: Trailing whitespace (trailing-whitespace)\\nsandbox\\\\code.py:58:0: C0304: Final newline missing (missing-final-newline)\\n\\n-----------------------------------\\nYour code has been rated at 8.10/10\\n\\n', 'status': 'SUCCESS'}\n    ",
+            "output_response": "Here's a concise refactoring plan:\n\n*   **Fix Factorial Calculation Logic:** Correct the `for` loop in `calculate_factorial` to iterate up to and including `n` (e.g., `range(1, n + 1)`).\n*   **Remove Trailing Whitespace:** Eliminate trailing whitespace on lines 24, 28, and 35.\n*   **Add Final Newline:** Ensure the file ends with a newline character."
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "618a9015-02df-411a-b1b3-be846dafde8a",
+        "timestamp": "2026-02-28T10:09:44.336528",
+        "agent_name": "Fixer",
+        "model_used": "gemini-2.5-flash",
+        "file_analysed": "sandbox\\code.py",
+        "action": "FIX",
+        "details": {
+            "file": "sandbox\\code.py",
+            "input_prompt": "\n    Apply this plan to the code. Output ONLY python code.\n    PLAN:\n    Here's a concise refactoring plan:\n\n*   **Fix Factorial Calculation Logic:** Correct the `for` loop in `calculate_factorial` to iterate up to and including `n` (e.g., `range(1, n + 1)`).\n*   **Remove Trailing Whitespace:** Eliminate trailing whitespace on lines 24, 28, and 35.\n*   **Add Final Newline:** Ensure the file ends with a newline character.\n    CODE:\n    \"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less than or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")\n    ",
+            "output_response": "\"\"\"Module for calculating factorials.\"\"\"\n\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer using an iterative approach.\n\n    The factorial of a non-negative integer n, denoted by n!, is the product\n    of all positive integers less or equal to n.\n    The factorial of 0 is 1.\n\n    Args:\n        n (int): The non-negative integer for which to calculate the factorial.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative number.\n    \"\"\"\n    # Input Validation: Check if n is an integer\n    if not isinstance(n, int):\n        raise TypeError(\"Input 'n' must be an integer.\")\n    \n    # Input Validation: Check if n is negative\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n    \n    # Iterative calculation:\n    # The factorial of 0 is 1.\n    # For n > 0, calculate n * (n-1) * ... * 1\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    \n    return factorial_result\n\n# --- Test Cases ---\n\n# 1. This works perfectly\nprint(f\"5! is: {calculate_factorial(5)}\")\n\n# 2. Test for 0! (new base case)\nprint(f\"0! is: {calculate_factorial(0)}\")\n\n# 3. Test for negative input (will now raise ValueError)\nprint(\"Calculating factorial for -1...\")\ntry:\n    print(calculate_factorial(-1))\nexcept ValueError as e:\n    print(f\"Error: {e}\")\n\n# 4. Test for non-integer input (will now raise TypeError)\nprint(\"Calculating factorial for 3.5...\")\ntry:\n    print(calculate_factorial(3.5))\nexcept TypeError as e:\n    print(f\"Error: {e}\")"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "e9b9e0be-4e0e-4872-9101-a56f28cd005b",
+        "timestamp": "2026-02-28T10:09:44.346056",
+        "agent_name": "Judge",
+        "model_used": "Tool",
+        "file_analysed": "sandbox\\code.py",
+        "action": "DEBUG",
+        "details": {
+            "report": {
+                "status": "SKIPPED",
+                "message": "No test file found"
+            },
+            "input_prompt": "Running tests",
+            "output_response": "{'status': 'SKIPPED', 'message': 'No test file found'}"
+        },
+        "status": "SUCCESS"
     }
 ]
